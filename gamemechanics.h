@@ -3,12 +3,22 @@
 
 #include <QObject>
 
+enum CellType {empty, wall, busyByPlayer, busyByEnemy};
+
 class GameMechanics : public QObject
 {
     Q_OBJECT
+
+private:
+    int mapSize {8};
+    CellType ** map;
+
 public:
     explicit GameMechanics(QObject *parent = 0);
     ~GameMechanics();
+
+    int getMapSize() const;
+    CellType getCell(int i, int j) const;
 
 signals:
 
