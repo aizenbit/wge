@@ -11,6 +11,8 @@ GameMechanics::GameMechanics(QObject *parent) : QObject(parent)
             map[i][j] = empty;
 }
 
+//------------------------------------------------------------
+
 GameMechanics::~GameMechanics()
 {
     for (int i = 0; i < mapSize; i++)
@@ -18,10 +20,14 @@ GameMechanics::~GameMechanics()
     delete [] map;
 }
 
+//------------------------------------------------------------
+
 int GameMechanics::getMapSize() const
 {
     return mapSize;
 }
+
+//------------------------------------------------------------
 
 CellType GameMechanics::getCell(int i, int j) const
 {

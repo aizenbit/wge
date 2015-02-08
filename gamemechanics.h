@@ -3,7 +3,13 @@
 
 #include <QObject>
 
-enum CellType {empty, wall, busyByPlayer, busyByEnemy};
+enum CellType {empty,
+               wall,
+               busyByPlayer,
+               busyByEnemy,
+               cellTypeCount};
+
+//------------------------------------------------------------
 
 class GameMechanics : public QObject
 {

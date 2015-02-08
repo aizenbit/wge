@@ -11,6 +11,10 @@ class UI : public QWidget
 
 private:
     GameMechanics *gameMechanics;
+    QColor cellColor[cellTypeCount] {QColor(152, 251, 152),
+                                     QColor(139, 16, 19),
+                                     QColor(0, 206, 209),
+                                     QColor(255, 140, 0)};
 public:
     UI(QWidget *parent = 0);
     ~UI();
