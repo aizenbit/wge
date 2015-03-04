@@ -4,6 +4,8 @@
 #include <QObject>
 
 enum CellType {empty,
+               grass,
+               sand,
                wall,
                busyByPlayer,
                busyByEnemy,
@@ -16,8 +18,12 @@ class GameMechanics : public QObject
     Q_OBJECT
 
 private:
-    int mapSize {8};
+    int mapSize {65}; //must be (power of 2) + 1
     CellType ** map;
+
+    void diamondSquare(float **floatMap);
+    void diamond(float **floatMap, int n);
+    void square(float **floatMap, int n);
 
 public:
     explicit GameMechanics(QObject *parent = 0);
@@ -25,6 +31,8 @@ public:
 
     int getMapSize() const;
     CellType getCell(int i, int j) const;
+
+    void generateMap(unsigned int seed = 0);
 
 signals:
 
