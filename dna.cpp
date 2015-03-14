@@ -8,7 +8,7 @@ DNA::DNA(QObject *parent) : QObject(parent)
     dna[0].maxValue = 1000;
     dna[1].maxValue = 100;
 
-    for (Gen gen: dna)
+    for (Gen &gen: dna)
     {
         gen.value = rand() % gen.maxValue;
     }

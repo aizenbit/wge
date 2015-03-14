@@ -2,6 +2,7 @@
 #define CREATURE_H
 
 #include <QObject>
+#include <QPoint>
 
 #include "dna.h"
 
@@ -10,10 +11,10 @@ class Creature : public QObject
     Q_OBJECT
 
 private:
-    DNA *dna;
+    DNA dna;
     unsigned int HP;
     unsigned int defence;
-    QPoint *position;
+    QPoint position;
 
 public:
     explicit Creature(QObject *parent = 0);
