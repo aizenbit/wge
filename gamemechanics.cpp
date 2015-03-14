@@ -1,5 +1,6 @@
 #include "gamemechanics.h"
 
+
 GameMechanics::GameMechanics(QObject *parent) : QObject(parent)
 {
     map = new CellType*[mapSize];
@@ -13,7 +14,7 @@ GameMechanics::GameMechanics(QObject *parent) : QObject(parent)
     generateMap();
 
     //for debug
-    Creature *creature = new Creature();
+    Creature *creature = new Creature(map, mapSize);
     delete creature;
 }
 
@@ -35,7 +36,7 @@ int GameMechanics::getMapSize() const
 
 //------------------------------------------------------------
 
-GameMechanics::CellType GameMechanics::getCell(int i, int j) const
+CellType GameMechanics::getCell(int i, int j) const
 {
     return map[i][j];
 }

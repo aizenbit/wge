@@ -4,26 +4,17 @@
 #include <QObject>
 
 #include "creature.h"
-
-//------------------------------------------------------------
+#include "celltype.h"
 
 class GameMechanics : public QObject
 {
     Q_OBJECT
 
 public:
-    enum CellType {
-        empty,
-        grass,
-        sand,
-        wall,
-        busyByPlayer,
-        busyByEnemy,
-        cellTypeCount
-    };
+
 
 private:
-    int mapSize {65}; //must be (power of 2) + 1
+    const int mapSize {65}; //must be (power of 2) + 1
     CellType ** map;
 
     void diamondSquare(float **floatMap);

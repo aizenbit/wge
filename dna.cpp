@@ -5,13 +5,11 @@ DNA::DNA(QObject *parent) : QObject(parent)
     for(int i = 0; i < genTypeCount; i++)
         dna.push_back({0,0});
 
-    dna[0].maxValue = 1000;
-    dna[1].maxValue = 100;
+    dna[HP].maxValue = 1000;
+    dna[defence].maxValue = 100;
 
     for (Gen &gen: dna)
-    {
         gen.value = rand() % gen.maxValue;
-    }
 }
 
 //------------------------------------------------------------
@@ -37,7 +35,7 @@ unsigned DNA::getGenMaxValue(unsigned n) const
 
 //------------------------------------------------------------
 
-DNA::Gen DNA::getGene(unsigned n) const
+DNA::Gen DNA::getGen(unsigned n) const
 {
     return dna[n];
 }
@@ -64,6 +62,6 @@ void DNA::operator =(const DNA& newdna)
 {
     for (int i = 0; i <= genTypeCount; i++)
     {
-        dna[i] = newdna.getGene(i);
+        dna[i] = newdna.getGen(i);
     }
 }

@@ -21,6 +21,7 @@ SOURCES += main.cpp\
 HEADERS  += ui.h \
     gamemechanics.h \
     dna.h \
-    creature.h
+    creature.h \
+    celltype.h
 
 QMAKE_CXXFLAGS += -std=gnu++0x

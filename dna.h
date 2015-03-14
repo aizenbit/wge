@@ -29,7 +29,7 @@ public:
     ~DNA();
     unsigned getGenValue(unsigned n) const;
     unsigned getGenMaxValue(unsigned n) const;
-    Gen getGene(unsigned n) const;
+    Gen getGen(unsigned n) const;
     void randomMutation(unsigned f, unsigned power = 50);
 
     void operator=(const DNA&);

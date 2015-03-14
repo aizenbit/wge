@@ -6,6 +6,8 @@
 
 #include "dna.h"
 
+#include "celltype.h"
+
 class Creature : public QObject
 {
     Q_OBJECT
@@ -14,11 +16,15 @@ private:
     DNA dna;
     unsigned int HP;
     unsigned int defence;
-    QPoint position;
+    unsigned int mapSize;
+    CellType **map;
+
 
 public:
-    explicit Creature(QObject *parent = 0);
+    explicit Creature(CellType **m, unsigned mS, QObject *parent = 0);
     ~Creature();
+
+    QPoint position;
 
 signals:
 
