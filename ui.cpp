@@ -22,8 +22,6 @@ void UI::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.begin(this);
 
-    //painter.setPen(QColor(255, 255, 255));
-
     auto mapSize = gameMechanics->getMapSize(); //using auto just for using auto
     float cellWidth = this->width() / float(mapSize);
     float cellHeight = this->height() / float(mapSize);

@@ -3,19 +3,24 @@
 
 #include <QObject>
 
-enum CellType {empty,
-               grass,
-               sand,
-               wall,
-               busyByPlayer,
-               busyByEnemy,
-               cellTypeCount};
+#include "creature.h"
 
 //------------------------------------------------------------
 
 class GameMechanics : public QObject
 {
     Q_OBJECT
+
+public:
+    enum CellType {
+        empty,
+        grass,
+        sand,
+        wall,
+        busyByPlayer,
+        busyByEnemy,
+        cellTypeCount
+    };
 
 private:
     int mapSize {65}; //must be (power of 2) + 1

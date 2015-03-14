@@ -11,6 +11,10 @@ GameMechanics::GameMechanics(QObject *parent) : QObject(parent)
             map[i][j] = empty;
 
     generateMap();
+
+    //for debug
+    Creature *creature = new Creature();
+    delete creature;
 }
 
 //------------------------------------------------------------
@@ -31,7 +35,7 @@ int GameMechanics::getMapSize() const
 
 //------------------------------------------------------------
 
-CellType GameMechanics::getCell(int i, int j) const
+GameMechanics::CellType GameMechanics::getCell(int i, int j) const
 {
     return map[i][j];
 }
