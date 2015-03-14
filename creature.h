@@ -11,6 +11,10 @@ class Creature : public QObject
 
 private:
     DNA *dna;
+    unsigned int HP;
+    unsigned int defence;
+    QPoint *position;
+
 public:
     explicit Creature(QObject *parent = 0);
     ~Creature();

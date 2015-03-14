@@ -14,8 +14,32 @@ DNA::DNA(QObject *parent) : QObject(parent)
     }
 }
 
+//------------------------------------------------------------
+
 DNA::~DNA()
 {
 
 }
 
+//------------------------------------------------------------
+
+unsigned DNA::getGenValue(unsigned n)
+{
+    return dna[n].value;
+}
+
+//------------------------------------------------------------
+
+void DNA::randomMutation(unsigned f, unsigned power)
+{
+    f %= genTypeCount;
+    f = genTypeCount - f;
+
+    for (Gen gen: dna)
+        if (rand() % f)
+        {
+            unsigned p = float(gen.maxValue) / power * 100;
+            gen.value += rand() % p;
+            gen.value %= gen.maxValue;
+        }
+}

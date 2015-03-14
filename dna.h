@@ -27,6 +27,8 @@ private:
 public:
     explicit DNA(QObject *parent = 0);
     ~DNA();
+    unsigned getGenValue(unsigned n);
+    void randomMutation(unsigned f, unsigned power = 50);
 
 
 signals:
