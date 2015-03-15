@@ -1,8 +1,11 @@
 #include "gamemechanics.h"
 
 
-GameMechanics::GameMechanics(QObject *parent) : QObject(parent)
+GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 {
+    //each cell holds at least 7 pixels
+    this->setMinimumSize(mapSize * 7, mapSize * 7);
+
     map = new CellType::CellType*[mapSize];
     for (int i = 0; i < mapSize; i++)
         map[i] = new CellType::CellType[mapSize];
@@ -192,3 +195,23 @@ void GameMechanics::square(float ** floatMap, int n)
 }
 
 //------------------------------------------------------------
+
+void GameMechanics::paintEvent(QPaintEvent *)
+{
+    QPainter painter(this);
+    painter.begin(this);
+
+    float cellWidth = this->width() / float(mapSize);
+    float cellHeight = this->height() / float(mapSize);
+
+    for (int i = 0; i < mapSize; i++) //paint cells according to cell types
+        for (int j = 0; j < mapSize; j++)
+        {
+                painter.setBrush(cellColor[getCell(i, j)]);
+                painter.setPen(cellColor[getCell(i, j)]);
+                painter.drawRect(i * cellWidth, j * cellHeight,
+                                 (i + 1) * cellWidth, (j + 1) * cellHeight);
+        }
+
+    painter.end();
+}
