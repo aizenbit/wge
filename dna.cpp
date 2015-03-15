@@ -7,6 +7,8 @@ DNA::DNA(QObject *parent) : QObject(parent)
 
     dna[HP].maxValue = 1000;
     dna[defence].maxValue = 100;
+    dna[damage].maxValue = 500;
+    dna[actionpoints].maxValue = 9;
 
     for (Gen &gen: dna)
         gen.value = rand() % gen.maxValue;

@@ -6,7 +6,7 @@
 
 #include "dna.h"
 
-#include "celltype.h"
+#include "enum.h"
 
 class Creature : public QObject
 {
@@ -14,15 +14,21 @@ class Creature : public QObject
 
 private:
     DNA dna;
-    unsigned int HP;
-    unsigned int defence;
-    unsigned int mapSize;
+    int HP;
+    int defence;
+    int damage;
+    int mapSize;
+    int actionpoints;
     CellType **map;
 
 
 public:
     explicit Creature(CellType **m, unsigned mS, QObject *parent = 0);
     ~Creature();
+    const QPoint getPosition() const;
+    bool move(Direction direction);
+    bool attack(Creature *creature);
+    void acceptDamage(int dmg);
 
     QPoint position;
 

@@ -14,8 +14,10 @@ GameMechanics::GameMechanics(QObject *parent) : QObject(parent)
     generateMap();
 
     //for debug
-    Creature *creature = new Creature(map, mapSize);
-    delete creature;
+    Creature *creature1 = new Creature(map, mapSize);
+    Creature *creature2 = new Creature(map, mapSize);
+    delete creature1;
+    delete creature2;
 }
 
 //------------------------------------------------------------

@@ -4,7 +4,7 @@
 #include <QObject>
 
 #include "creature.h"
-#include "celltype.h"
+#include "enum.h"
 
 class GameMechanics : public QObject
 {

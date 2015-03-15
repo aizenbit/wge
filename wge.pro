@@ -22,6 +22,6 @@ HEADERS  += ui.h \
     gamemechanics.h \
     dna.h \
     creature.h \
-    celltype.h
+    enum.h
 
 QMAKE_CXXFLAGS += -std=gnu++0x

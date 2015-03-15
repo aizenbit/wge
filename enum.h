@@ -1,5 +1,5 @@
-#ifndef CELLTYPE_H
-#define CELLTYPE_H
+#ifndef ENUM_H
+#define ENUM_H
 
 enum CellType {
     empty,
@@ -11,5 +11,12 @@ enum CellType {
     cellTypeCount
 };
 
-#endif // CELLTYPE_H
+enum Direction {
+    up,
+    down,
+    left,
+    right
+};
+
+#endif // ENUM_H
 

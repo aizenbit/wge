@@ -12,6 +12,8 @@ public:
     enum GenType {
         HP,
         defence,
+        damage,
+        actionpoints,
         genTypeCount
     };
 
