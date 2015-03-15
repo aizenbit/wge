@@ -3,13 +3,13 @@
 
 GameMechanics::GameMechanics(QObject *parent) : QObject(parent)
 {
-    map = new CellType*[mapSize];
+    map = new CellType::CellType*[mapSize];
     for (int i = 0; i < mapSize; i++)
-        map[i] = new CellType[mapSize];
+        map[i] = new CellType::CellType[mapSize];
 
     for (int i = 0; i < mapSize; i++)
         for (int j = 0; j < mapSize; j++)
-            map[i][j] = empty;
+            map[i][j] = CellType::empty;
 
     generateMap();
 
@@ -38,7 +38,7 @@ int GameMechanics::getMapSize() const
 
 //------------------------------------------------------------
 
-CellType GameMechanics::getCell(int i, int j) const
+CellType::CellType GameMechanics::getCell(int i, int j) const
 {
     return map[i][j];
 }
@@ -66,13 +66,13 @@ void GameMechanics::generateMap(unsigned int seed)
     for (int i = 0; i < mapSize; i++)
         for (int j = 0; j < mapSize; j++)
         {
-            CellType newCell = CellType(floatMap[i][j] * (3) + 1);
+            CellType::CellType newCell = CellType::CellType(floatMap[i][j] * (3) + 1);
 
-            if(newCell == empty)
-                newCell = CellType(empty + 1);
+            if(newCell == CellType::empty)
+                newCell = CellType::CellType(CellType::empty + 1);
 
-            if(newCell >= busyByPlayer)
-                newCell = CellType(busyByPlayer - 1);
+            if(newCell >= CellType::busyByPlayer)
+                newCell = CellType::CellType(CellType::busyByPlayer - 1);
 
             map[i][j] = newCell;
         }

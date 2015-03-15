@@ -19,14 +19,14 @@ private:
     int damage;
     int mapSize;
     int actionpoints;
-    CellType **map;
+    CellType::CellType **map;
 
 
 public:
-    explicit Creature(CellType **m, unsigned mS, QObject *parent = 0);
+    explicit Creature(CellType::CellType **m, unsigned mS, QObject *parent = 0);
     ~Creature();
     const QPoint getPosition() const;
-    bool move(Direction direction);
+    bool move(Direction::Direction direction);
     bool attack(Creature *creature);
     void acceptDamage(int dmg);
 

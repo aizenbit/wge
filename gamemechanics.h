@@ -15,7 +15,7 @@ public:
 
 private:
     const int mapSize {65}; //must be (power of 2) + 1
-    CellType ** map;
+    CellType::CellType ** map;
 
     void diamondSquare(float **floatMap);
     void diamond(float **floatMap, int n);
@@ -26,7 +26,7 @@ public:
     ~GameMechanics();
 
     int getMapSize() const;
-    CellType getCell(int i, int j) const;
+    CellType::CellType getCell(int i, int j) const;
 
     void generateMap(unsigned int seed = 0);
 

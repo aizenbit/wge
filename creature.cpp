@@ -2,7 +2,7 @@
 
 #include "creature.h"
 
-Creature::Creature(CellType **m, unsigned mS, QObject *parent) : QObject(parent)
+Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObject(parent)
 {
     //get DNA information
     HP = dna.getGenValue(DNA::HP);
@@ -33,40 +33,40 @@ const QPoint Creature::getPosition() const
 
 //------------------------------------------------------------
 
-bool Creature::move(Direction direction)
+bool Creature::move(Direction::Direction direction)
 {
     const int x = position.x();
     const int y = position.y();
 
     switch (direction) {
 
-    case up:
+    case Direction::up:
         if (y == 0)
             return false;
-        if (map[x][y - 1] == wall)
+        if (map[x][y - 1] == CellType::wall)
             return false;
         position.ry()--;
         break;
 
-    case down:
+    case Direction::down:
         if (y == (mapSize - 1))
             return false;
-        if (map[x][y + 1] == wall)
+        if (map[x][y + 1] == CellType::wall)
             return false;
         position.ry()++;
         break;
 
-    case left:
+    case Direction::left:
         if (x == 0)
             return false;
-        if (map[x - 1][y] == wall)
+        if (map[x - 1][y] == CellType::wall)
             return false;
         position.rx()++;
 
-    case right:
+    case Direction::right:
         if (x == (mapSize - 1))
             return false;
-        if (map[x + 1][y] == wall)
+        if (map[x + 1][y] == CellType::wall)
             return false;
         position.rx()--;
 
