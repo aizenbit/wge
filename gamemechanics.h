@@ -2,6 +2,7 @@
 #define GAMEMECHANICS_H
 
 #include <QtWidgets/QtWidgets>
+#include <vector>
 
 #include "creature.h"
 #include "enum.h"
@@ -19,8 +20,9 @@ private:
         QColor(0, 206, 209),
         QColor(255, 140, 0)};
 
-    const int mapSize {65}; //must be (power of 2) + 1
+    int mapSize {65}; //must be (power of 2) + 1
     CellType::CellType ** map;
+    std::vector<Creature> enemy;
 
     void diamondSquare(float **floatMap);
     void diamond(float **floatMap, int n);
@@ -35,6 +37,8 @@ public:
 
     void generateMap(unsigned int seed = 0);
     virtual void paintEvent(QPaintEvent *);
+    void paintMap(QPainter &painter);
+    void paintEnemy(QPainter &painter);
 
 signals:
 

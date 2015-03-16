@@ -23,7 +23,8 @@ private:
 
 
 public:
-    explicit Creature(CellType::CellType **m, unsigned mS, QObject *parent = 0);
+    Creature(CellType::CellType **m, unsigned mS, QObject *parent = 0);
+    Creature(const Creature&);
     ~Creature();
     const QPoint getPosition() const;
     bool move(Direction::Direction direction);

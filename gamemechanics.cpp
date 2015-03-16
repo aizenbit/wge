@@ -17,10 +17,8 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     generateMap();
 
     //for debug
-    Creature *creature1 = new Creature(map, mapSize);
-    Creature *creature2 = new Creature(map, mapSize);
-    delete creature1;
-    delete creature2;
+    Creature creature(map, mapSize);
+    enemy.push_back(creature);
 }
 
 //------------------------------------------------------------
@@ -201,6 +199,15 @@ void GameMechanics::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.begin(this);
 
+    paintMap(painter);
+
+    painter.end();
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::paintMap(QPainter &painter)
+{
     float cellWidth = this->width() / float(mapSize);
     float cellHeight = this->height() / float(mapSize);
 
@@ -212,6 +219,11 @@ void GameMechanics::paintEvent(QPaintEvent *)
                 painter.drawRect(i * cellWidth, j * cellHeight,
                                  (i + 1) * cellWidth, (j + 1) * cellHeight);
         }
+}
 
-    painter.end();
+//------------------------------------------------------------
+
+void GameMechanics::paintEnemy(QPainter &painter)
+{
+
 }

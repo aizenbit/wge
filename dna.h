@@ -27,7 +27,7 @@ private:
 
 
 public:
-    explicit DNA(QObject *parent = 0);
+    DNA(QObject *parent = 0);
     ~DNA();
     unsigned getGenValue(unsigned n) const;
     unsigned getGenMaxValue(unsigned n) const;

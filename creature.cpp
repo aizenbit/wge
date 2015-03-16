@@ -19,6 +19,21 @@ Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObje
 
 //------------------------------------------------------------
 
+Creature::Creature(const Creature &creature) : QObject(creature.parent())
+{
+    HP = creature.HP;
+    defence = creature.defence;
+    damage = creature.damage;
+    actionpoints = creature.actionpoints;
+
+    position = creature.position;
+
+    map = creature.map;
+    mapSize = creature.mapSize;
+}
+
+//------------------------------------------------------------
+
 Creature::~Creature()
 {
 
