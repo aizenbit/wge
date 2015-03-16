@@ -21,6 +21,7 @@ Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObje
 
 Creature::Creature(const Creature &creature) : QObject(creature.parent())
 {
+    dna = creature.dna;
     HP = creature.HP;
     defence = creature.defence;
     damage = creature.damage;

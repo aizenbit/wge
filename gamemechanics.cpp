@@ -17,8 +17,10 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     generateMap();
 
     //for debug
-    Creature creature(map, mapSize);
-    enemy.push_back(creature);
+    Creature creature1(map, mapSize);
+    Creature creature2(map, mapSize);
+    enemy.push_back(creature1);
+    enemy.push_back(creature2);
 }
 
 //------------------------------------------------------------
