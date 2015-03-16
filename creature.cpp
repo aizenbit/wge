@@ -77,14 +77,16 @@ bool Creature::move(Direction::Direction direction)
             return false;
         if (map[x - 1][y] == CellType::wall)
             return false;
-        position.rx()++;
+        position.rx()--;
+        break;
 
     case Direction::right:
         if (x == (mapSize - 1))
             return false;
         if (map[x + 1][y] == CellType::wall)
             return false;
-        position.rx()--;
+        position.rx()++;
+        break;
 
     default:
         return false;

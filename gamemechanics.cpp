@@ -202,6 +202,7 @@ void GameMechanics::paintEvent(QPaintEvent *)
     painter.begin(this);
 
     paintMap(painter);
+    paintEnemy(painter);
 
     painter.end();
 }
@@ -219,7 +220,7 @@ void GameMechanics::paintMap(QPainter &painter)
                 painter.setBrush(cellColor[getCell(i, j)]);
                 painter.setPen(cellColor[getCell(i, j)]);
                 painter.drawRect(i * cellWidth, j * cellHeight,
-                                 (i + 1) * cellWidth, (j + 1) * cellHeight);
+                                 cellWidth, cellHeight);
         }
 }
 
@@ -227,5 +228,16 @@ void GameMechanics::paintMap(QPainter &painter)
 
 void GameMechanics::paintEnemy(QPainter &painter)
 {
+    float cellWidth = this->width() / float(mapSize);
+    float cellHeight = this->height() / float(mapSize);
 
+    painter.setBrush(cellColor[CellType::busyByEnemy]);
+    painter.setPen(cellColor[CellType::busyByEnemy]);
+
+    for (Creature creature : enemy)
+    {
+        int xb = creature.getPosition().x() * cellWidth;
+        int yb = creature.getPosition().y() * cellWidth;
+        painter.drawRect(xb, yb, cellWidth, cellHeight);
+    }
 }
