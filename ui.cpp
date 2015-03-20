@@ -11,7 +11,11 @@ UI::UI(QWidget *parent)
 
     mainLayout = new QVBoxLayout();
 
-    mainLayout->addWidget(gameMechanics);
+    scrollArea = new QScrollArea();
+    scrollArea->setBackgroundRole(QPalette::Dark);
+    scrollArea->setWidget(gameMechanics);
+
+    mainLayout->addWidget(scrollArea);
     mainLayout->addWidget(stepPB);
 
     this->setLayout(mainLayout);
@@ -22,6 +26,7 @@ UI::UI(QWidget *parent)
 UI::~UI()
 {
     delete gameMechanics;
+    delete scrollArea;
 
     delete stepPB;
 

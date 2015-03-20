@@ -12,6 +12,7 @@ class UI : public QWidget
 private:
     GameMechanics *gameMechanics;
     QPushButton *stepPB;
+    QScrollArea *scrollArea;
     QVBoxLayout *mainLayout;
 
 public:

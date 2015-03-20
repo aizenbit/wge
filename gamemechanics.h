@@ -28,6 +28,10 @@ private:
     void diamond(float **floatMap, int n);
     void square(float **floatMap, int n);
 
+    virtual void paintEvent(QPaintEvent *);
+    void paintMap(QPainter &painter);
+    void paintEnemy(QPainter &painter);
+
 public:
     explicit GameMechanics(QWidget *parent = 0);
     ~GameMechanics();
@@ -36,9 +40,7 @@ public:
     CellType::CellType getCell(int i, int j) const;
 
     void generateMap(unsigned int seed = 0);
-    virtual void paintEvent(QPaintEvent *);
-    void paintMap(QPainter &painter);
-    void paintEnemy(QPainter &painter);
+
 
 signals:
 
