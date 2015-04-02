@@ -1,4 +1,5 @@
 #include <QPoint>
+#include <QLabel>
 
 #include "creature.h"
 
@@ -10,7 +11,7 @@ Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObje
     damage = dna.getGenValue(DNA::damage);
     actionpoints = dna.getGenValue(DNA::actionpoints);
 
-    position = QPoint(2,2);
+    position = QPoint(2,3);
 
     map = m;
     mapSize = mS;
@@ -31,6 +32,8 @@ Creature::Creature(const Creature &creature) : QObject(creature.parent())
 
     map = creature.map;
     mapSize = creature.mapSize;
+
+    way = creature.way;
 }
 
 //------------------------------------------------------------
@@ -45,6 +48,13 @@ Creature::~Creature()
 const QPoint Creature::getPosition() const
 {
     return position;
+}
+
+//------------------------------------------------------------
+
+std::vector<QPoint> Creature::getWay() const
+{
+    return way;
 }
 
 //------------------------------------------------------------
@@ -136,18 +146,20 @@ bool Creature::findWayTo(int x, int y)
         for (int i = 0; i < mapSize; i++)
             for (int j = 0; j < mapSize; j++)
                 if (labelMap[i][j] == step)
-                {
+
                     for (int k = -1; k <= 1; k++)
                         for (int l = -1; l <= 1; l++)
                         {
-                            int tx = i + k;
+                            int tx = i + k; //temporary x and y
                             int ty = j + l;
+
                             if (tx > mapSize || tx < 0 ||
                                 ty > mapSize || ty < 0)
                                 continue;
-                            if ( labelMap[tx][ty] == -2 )
+
+                            if (labelMap[tx][ty] == -2)
                             {
-                                if ( map[tx][ty] == CellType::wall )
+                                if (map[tx][ty] == CellType::wall)
                                     labelMap[tx][ty] = -1;
                                     else
                                 {
@@ -156,38 +168,73 @@ bool Creature::findWayTo(int x, int y)
                                 }
                             }
                         }
-                }
+        step++;
     }
-
-    if (labelMap[x][y] == -2)
-        return false;
 
     //Backtrace
     way.clear();
-    step = labelMap[x][y];
-    way.push_back(QPoint(x,y));
+    way.push_back(QPoint(x, y));
 
-    while(step >= 0)
+    while(step > 0)
     {
         int tx = way.back().x();
         int ty = way.back().y();
         bool found = false;
+        bool optimalDirection = false;
 
+        //calculate direction vector
+        int xDirection = myX - x;
+        int yDirection = myY - y;
+
+        if(abs(xDirection) > abs(yDirection))
+        {
+            yDirection = 0;
+            xDirection /= abs(xDirection);
+        }
+        else
+            if (abs(xDirection) < abs(yDirection))
+            {
+                xDirection = 0;
+                yDirection /= abs(yDirection);
+            } else
+            {
+                xDirection /= abs(xDirection);
+                yDirection /= abs(yDirection);
+            }
+
+        //search next cell,
+        //cell in the right direction is prioritized
         for (int i = -1; i <= 1; i++)
             for (int j = -1; j <= 1; j++)
             {
-                if (!found || tx + i > mapSize || tx + i < 0 ||
-                              ty + j > mapSize || ty + j < 0)
+                if (optimalDirection ||
+                    tx + i >= mapSize || tx + i < 0 ||
+                    ty + j >= mapSize || ty + j < 0)
                     continue;
 
-                if(labelMap[x + i][y + j] < labelMap[x][y] &&
-                   labelMap[x + i][y + j] >= 0)
+                if (labelMap[tx + i][ty + j] < labelMap[tx][ty] &&
+                    labelMap[tx + i][ty + j] >= 0)
                 {
-                    way.push_back(QPoint(x + i, y + j));
-                    step++;
-                    found = true;
+                    if (xDirection == i && yDirection == j)
+                    {
+                        if (found)
+                            way.back() = QPoint(tx + i, ty + j);
+                        else
+                            way.push_back(QPoint(tx + i, ty + j));
+
+                        optimalDirection = true;
+                        found = true;
+                    }
+
+                    if (!found)
+                    {
+                        way.push_back(QPoint(tx + i, ty + j));
+                        found = true;
+                    }
+
                 }
             }
+        step--;
     }
 
     //Clearance

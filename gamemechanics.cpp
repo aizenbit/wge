@@ -19,8 +19,9 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     //for debug
     Creature creature1(map, mapSize);
     Creature creature2(map, mapSize);
+    creature1.findWayTo(50,10);
     enemy.push_back(creature1);
-    enemy.push_back(creature2);
+    //enemy.push_back(creature2);
 
 }
 
@@ -204,6 +205,7 @@ void GameMechanics::paintEvent(QPaintEvent *)
 
     paintMap(painter);
     paintEnemy(painter);
+    paintWay(painter, enemy.front());
 
     painter.end();
 }
@@ -245,6 +247,23 @@ void GameMechanics::paintEnemy(QPainter &painter)
 
 //------------------------------------------------------------
 
+void GameMechanics::paintWay(QPainter &painter, const Creature &creature)
+{
+    float cellWidth = this->width() / float(mapSize);
+    float cellHeight = this->height() / float(mapSize);
+
+    painter.setBrush(Qt::yellow);
+    painter.setPen(Qt::yellow);
+
+    for (QPoint point : creature.getWay())
+        painter.drawRect(point.x() * cellWidth,
+                         point.y() * cellHeight,
+                         cellWidth,
+                         cellHeight);
+}
+
+//------------------------------------------------------------
+
 void GameMechanics::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() != Qt::RightButton)
@@ -256,7 +275,9 @@ void GameMechanics::mousePressEvent(QMouseEvent *event)
     int i = pos.x() / (this->width() / float(mapSize));
     int j = pos.y() / (this->height() / float(mapSize));
 
-    text = QString(tr("CellType = %1")).arg(int(map[i][j]));
+    text = QString(tr("(%1;%2)\n"
+                      "CellType = %3")).arg(i).arg(j)
+                                       .arg(int(map[i][j]));
 
     QToolTip::showText(this->mapToGlobal(pos), text, this);
 }

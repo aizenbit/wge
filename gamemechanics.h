@@ -31,6 +31,7 @@ private:
     virtual void paintEvent(QPaintEvent *);
     void paintMap(QPainter &painter);
     void paintEnemy(QPainter &painter);
+    void paintWay(QPainter &painter, const Creature &creature);
 
     virtual void mousePressEvent(QMouseEvent *);
 
