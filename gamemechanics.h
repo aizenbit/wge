@@ -32,6 +32,8 @@ private:
     void paintMap(QPainter &painter);
     void paintEnemy(QPainter &painter);
 
+    virtual void mousePressEvent(QMouseEvent *);
+
 public:
     explicit GameMechanics(QWidget *parent = 0);
     ~GameMechanics();

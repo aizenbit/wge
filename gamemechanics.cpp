@@ -21,6 +21,7 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     Creature creature2(map, mapSize);
     enemy.push_back(creature1);
     enemy.push_back(creature2);
+
 }
 
 //------------------------------------------------------------
@@ -240,4 +241,22 @@ void GameMechanics::paintEnemy(QPainter &painter)
         int yb = creature.getPosition().y() * cellWidth;
         painter.drawRect(xb, yb, cellWidth, cellHeight);
     }
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() != Qt::RightButton)
+        return;
+
+    QPoint pos = event->pos();
+    QString text;
+
+    int i = pos.x() / (this->width() / float(mapSize));
+    int j = pos.y() / (this->height() / float(mapSize));
+
+    text = QString(tr("CellType = %1")).arg(int(map[i][j]));
+
+    QToolTip::showText(this->mapToGlobal(pos), text, this);
 }

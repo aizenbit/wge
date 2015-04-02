@@ -20,6 +20,7 @@ private:
     int mapSize;
     int actionpoints;
     CellType::CellType **map;
+    std::vector<QPoint> way;
 
 
 public:
@@ -27,9 +28,11 @@ public:
     Creature(const Creature&);
     ~Creature();
     const QPoint getPosition() const;
-    bool move(Direction::Direction direction);
+    bool move(Direction::Direction directionX, Direction::Direction directionY);
     bool attack(Creature *creature);
     void acceptDamage(int dmg);
+    bool findWayTo(int x, int y);
+    int stepByWay();
 
     QPoint position;
 
