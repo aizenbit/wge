@@ -14,6 +14,7 @@ UI::UI(QWidget *parent)
     scrollArea = new QScrollArea();
     scrollArea->setBackgroundRole(QPalette::Dark);
     scrollArea->setWidget(gameMechanics);
+    scrollArea->setMinimumSize(gameMechanics->getMinimumSize());
 
     mainLayout->addWidget(scrollArea);
     mainLayout->addWidget(stepPB);

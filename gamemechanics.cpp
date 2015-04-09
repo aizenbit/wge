@@ -3,8 +3,8 @@
 
 GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 {
-    //each cell holds at least 7 pixels
-    this->setMinimumSize(mapSize * 7, mapSize * 7);
+    //each cell holds at least 10 pixels
+    this->setMinimumSize(mapSize * 10, mapSize * 10);
 
     map = new CellType::CellType*[mapSize];
     for (int i = 0; i < mapSize; i++)
@@ -16,12 +16,14 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 
     generateMap();
 
+    curCellPos = QPoint(0,0);
+
     player = new Creature(map, mapSize);
 
+    //for debug
     player->move(Direction::right, Direction::down);
     player->move(Direction::right, Direction::down);
 
-    //for debug
     for(int i = 0; i < mapSize-20; i++)
         map[i][20] = CellType::wall;
 
@@ -30,7 +32,6 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     creature1.findWayTo(50,60);
     enemy.push_back(creature1);
     //enemy.push_back(creature2);
-
 }
 
 //------------------------------------------------------------
@@ -49,6 +50,16 @@ GameMechanics::~GameMechanics()
 int GameMechanics::getMapSize() const
 {
     return mapSize;
+}
+
+//------------------------------------------------------------
+
+QSize GameMechanics::getMinimumSize() const
+{
+    QSize size = minimumSize();
+    size.rheight() += 2;
+    size.rwidth() += 2;
+    return size;
 }
 
 //------------------------------------------------------------
@@ -217,6 +228,7 @@ void GameMechanics::paintEvent(QPaintEvent *)
     paintEnemy(painter);
     //paintWay(painter, enemy.front());
     paintPlayer(painter);
+    paintCelectedCell(painter);
 
     painter.end();
 }
@@ -291,11 +303,34 @@ void GameMechanics::paintWay(QPainter &painter, const Creature &creature)
 
 //------------------------------------------------------------
 
+void GameMechanics::paintCelectedCell(QPainter &painter)
+{
+    float cellWidth = this->width() / float(mapSize);
+    float cellHeight = this->height() / float(mapSize);
+
+    painter.setBrush(Qt::NoBrush);
+    painter.setPen(Qt::white);
+
+    painter.drawRect(curCellPos.x() * cellWidth,
+                     curCellPos.y() * cellHeight,
+                     cellWidth,
+                     cellHeight);
+}
+
+//------------------------------------------------------------
+
 void GameMechanics::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() != Qt::RightButton)
-        return;
+    if (event->button() == Qt::RightButton)
+        showToolTip(event);
+    if (event->button() == Qt::LeftButton)
+        selectCell(event);
+}
 
+//------------------------------------------------------------
+
+void GameMechanics::showToolTip(QMouseEvent *event)
+{
     QPoint pos = event->pos();
     QString text;
 
@@ -307,4 +342,16 @@ void GameMechanics::mousePressEvent(QMouseEvent *event)
                                        .arg(int(map[i][j]));
 
     QToolTip::showText(this->mapToGlobal(pos), text, this);
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::selectCell(QMouseEvent *event)
+{
+    QPoint pos = event->pos();
+    int i = pos.x() / (this->width() / float(mapSize));
+    int j = pos.y() / (this->height() / float(mapSize));
+
+    curCellPos = QPoint(i,j);
+    repaint();
 }
