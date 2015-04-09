@@ -32,7 +32,7 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     creature1.findWayTo(50,60);
     enemy.push_back(creature1);
     //enemy.push_back(creature2);
-    player->attack(&creature1, DamageType::DamageType(DamageType::damageNear | DamageType::damageFire));
+    player->attack(&creature1, Damage::Type(Damage::Near | Damage::Fire));
 }
 
 //------------------------------------------------------------

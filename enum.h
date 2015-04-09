@@ -22,12 +22,12 @@ enum CellType {
 };*/
 }
 
-namespace DamageType{
-enum DamageType {
-    damageFire = 1,
-    damageIce  = 2,
-    damageLong = 4,
-    damageNear = 8
+namespace Damage{
+enum Type {
+    Fire = 1,
+    Ice  = 2,
+    Long = 4,
+    Near = 8
 };
 }
 

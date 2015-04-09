@@ -54,6 +54,7 @@ bool DNA::controlDNA()
         return false;
     if (dna[defenceLong].value + dna[defenceNear].value > dna[defencePoints].value)
         return false;
+
     return true;
 }
 

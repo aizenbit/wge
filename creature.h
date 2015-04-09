@@ -27,8 +27,8 @@ public:
     ~Creature();
     const QPoint getPosition() const;
     bool move(Direction::Direction directionX, Direction::Direction directionY);
-    bool attack(Creature *creature, DamageType::DamageType damageType);
-    void acceptDamage(int dmg, DamageType::DamageType damageType);
+    bool attack(Creature *creature, Damage::Type damageType);
+    void acceptDamage(int dmg, Damage::Type damageType);
     bool findWayTo(int x, int y);
     int stepByWay();
     const std::vector<QPoint> getWay() const;
