@@ -1,5 +1,4 @@
 #include <QPoint>
-#include <QLabel>
 
 #include "creature.h"
 
@@ -52,7 +51,7 @@ const QPoint Creature::getPosition() const
 
 //------------------------------------------------------------
 
-std::vector<QPoint> Creature::getWay() const
+const std::vector<QPoint> Creature::getWay() const
 {
     return way;
 }
@@ -153,8 +152,8 @@ bool Creature::findWayTo(int x, int y)
                             int tx = i + k; //temporary x and y
                             int ty = j + l;
 
-                            if (tx > mapSize || tx < 0 ||
-                                ty > mapSize || ty < 0)
+                            if (tx >= mapSize || tx < 0 ||
+                                ty >= mapSize || ty < 0)
                                 continue;
 
                             if (labelMap[tx][ty] == -2)
@@ -183,8 +182,8 @@ bool Creature::findWayTo(int x, int y)
         bool optimalDirection = false;
 
         //calculate direction vector
-        int xDirection = myX - x;
-        int yDirection = myY - y;
+        int xDirection = myX - tx;
+        int yDirection = myY - ty;
 
         if(abs(xDirection) > abs(yDirection))
         {
@@ -196,7 +195,8 @@ bool Creature::findWayTo(int x, int y)
             {
                 xDirection = 0;
                 yDirection /= abs(yDirection);
-            } else
+            }
+            else
             {
                 xDirection /= abs(xDirection);
                 yDirection /= abs(yDirection);

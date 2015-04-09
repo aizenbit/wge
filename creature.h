@@ -33,7 +33,7 @@ public:
     void acceptDamage(int dmg);
     bool findWayTo(int x, int y);
     int stepByWay();
-    std::vector<QPoint> getWay() const;
+    const std::vector<QPoint> getWay() const;
 
     QPoint position;
 

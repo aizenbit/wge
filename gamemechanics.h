@@ -16,7 +16,7 @@ private:
         QColor(0, 0, 0),
         QColor(152, 251, 152),
         QColor(253, 236, 143),
-        QColor(220, 220, 220),
+        QColor(0, 0, 0),
         QColor(0, 206, 209),
         QColor(255, 140, 0)};
 

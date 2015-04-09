@@ -17,9 +17,12 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     generateMap();
 
     //for debug
+    for(int i = 0; i < mapSize-20; i++)
+        map[i][20] = CellType::wall;
+
     Creature creature1(map, mapSize);
-    Creature creature2(map, mapSize);
-    creature1.findWayTo(50,10);
+    //Creature creature2(map, mapSize);
+    creature1.findWayTo(50,60);
     enemy.push_back(creature1);
     //enemy.push_back(creature2);
 
