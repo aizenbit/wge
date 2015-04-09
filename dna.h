@@ -10,9 +10,18 @@ class DNA : public QObject
 
 public:
     enum GenType {
+        dnaPoints,      //= HP + defP + damP
         HP,
-        defence,
-        damage,
+        defencePoints,  //= (defF + defI) && (defL + defN)
+        defenceFire,
+        defenceIce,
+        defenceLong,
+        defenceNear,
+        damagePoints,   //= (damF + damI) && (damL + damN)
+        damageFire,
+        damageIce,
+        damageLong,
+        damageNear,
         actionpoints,
         genTypeCount
     };
@@ -24,6 +33,7 @@ public:
 
 private:
     std::vector<Gen> dna;
+    bool controlDNA();
 
 
 public:

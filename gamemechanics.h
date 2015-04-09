@@ -23,6 +23,7 @@ private:
     int mapSize {65}; //must be (power of 2) + 1
     CellType::CellType ** map;
     std::vector<Creature> enemy;
+    Creature *player;
 
     void diamondSquare(float **floatMap);
     void diamond(float **floatMap, int n);
@@ -31,6 +32,7 @@ private:
     virtual void paintEvent(QPaintEvent *);
     void paintMap(QPainter &painter);
     void paintEnemy(QPainter &painter);
+    void paintPlayer(QPainter &painter);
     void paintWay(QPainter &painter, const Creature &creature);
 
     virtual void mousePressEvent(QMouseEvent *);

@@ -16,6 +16,11 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 
     generateMap();
 
+    player = new Creature(map, mapSize);
+
+    player->move(Direction::right, Direction::down);
+    player->move(Direction::right, Direction::down);
+
     //for debug
     for(int i = 0; i < mapSize-20; i++)
         map[i][20] = CellType::wall;
@@ -32,6 +37,8 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 
 GameMechanics::~GameMechanics()
 {
+    delete player;
+
     for (int i = 0; i < mapSize; i++)
         delete[] map[i];
     delete [] map;
@@ -208,7 +215,8 @@ void GameMechanics::paintEvent(QPaintEvent *)
 
     paintMap(painter);
     paintEnemy(painter);
-    paintWay(painter, enemy.front());
+    //paintWay(painter, enemy.front());
+    paintPlayer(painter);
 
     painter.end();
 }
@@ -228,6 +236,22 @@ void GameMechanics::paintMap(QPainter &painter)
                 painter.drawRect(i * cellWidth, j * cellHeight,
                                  cellWidth, cellHeight);
         }
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::paintPlayer(QPainter &painter)
+{
+    float cellWidth = this->width() / float(mapSize);
+    float cellHeight = this->height() / float(mapSize);
+
+    painter.setBrush(cellColor[CellType::busyByPlayer]);
+    painter.setPen(cellColor[CellType::busyByPlayer]);
+
+    painter.drawRect(player->getPosition().x() * cellWidth,
+                     player->getPosition().y() * cellHeight,
+                     cellWidth,
+                     cellHeight);
 }
 
 //------------------------------------------------------------

@@ -6,11 +6,9 @@ Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObje
 {
     //get DNA information
     HP = dna.getGenValue(DNA::HP);
-    defence = dna.getGenValue(DNA::defence);
-    damage = dna.getGenValue(DNA::damage);
     actionpoints = dna.getGenValue(DNA::actionpoints);
 
-    position = QPoint(2,3);
+    position = QPoint(0,0);
 
     map = m;
     mapSize = mS;
@@ -23,8 +21,6 @@ Creature::Creature(const Creature &creature) : QObject(creature.parent())
 {
     dna = creature.dna;
     HP = creature.HP;
-    defence = creature.defence;
-    damage = creature.damage;
     actionpoints = creature.actionpoints;
 
     position = creature.position;
