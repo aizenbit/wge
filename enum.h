@@ -22,6 +22,15 @@ enum CellType {
 };*/
 }
 
+namespace DamageType{
+enum DamageType {
+    damageFire = 1,
+    damageIce  = 2,
+    damageLong = 4,
+    damageNear = 8
+};
+}
+
 namespace Direction {
 enum Direction {
     nope = 0,

@@ -41,7 +41,10 @@ DNA::~DNA()
 
 bool DNA::controlDNA()
 {
-    if (dna[HP].value + dna[defencePoints].value + dna[damagePoints].value > dna[dnaPoints].value)
+    if (dna[HP].value +
+            dna[defencePoints].value +
+            dna[damagePoints].value +
+            dna[actionpoints].value * 10 > dna[dnaPoints].value)
         return false;
     if (dna[damageFire].value + dna[damageIce].value > dna[damagePoints].value)
         return false;

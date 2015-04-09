@@ -77,17 +77,47 @@ bool Creature::move(Direction::Direction directionX, Direction::Direction direct
 
 //------------------------------------------------------------
 
-bool Creature::attack(Creature *creature)
+bool Creature::attack(Creature *creature, DamageType::DamageType damageType)
 {
     const QPoint enemyPos = creature->getPosition();
-    const int damageDistance = 10;
+    const int nearDamageDistance = 10;
+    const int longDamageDistance = 25;
+
     float distance = sqrtf(powf(enemyPos.x() - position.x(), 2) +
                            powf(enemyPos.y() - position.y(), 2));
-    if (distance <= damageDistance)
-    {
-        int dmg = damage * logf(damageDistance - distance);
-        creature->acceptDamage(dmg);
 
+    if (damageType & DamageType::damageNear)
+    {
+        if (distance >= nearDamageDistance)
+            return false;
+
+        int dmg = dna.getGenValue(DNA::damageNear) * logf(nearDamageDistance - distance);
+
+        if(damageType & DamageType::damageFire)
+            dmg += dna.getGenValue(DNA::damageFire);
+
+        if(damageType & DamageType::damageIce)
+            dmg += dna.getGenValue(DNA::damageIce);
+
+        creature->acceptDamage(dmg, damageType);
+        actionpoints--;
+        return true;
+    }
+
+    if (damageType & DamageType::damageLong)
+    {
+        if (distance >= longDamageDistance)
+            return false;
+
+        int dmg = dna.getGenValue(DNA::damageLong) * logf(abs(distance - longDamageDistance));
+
+        if(damageType & DamageType::damageFire)
+            dmg += dna.getGenValue(DNA::damageFire);
+
+        if(damageType & DamageType::damageIce)
+            dmg += dna.getGenValue(DNA::damageIce);
+
+        creature->acceptDamage(dmg, damageType);
         actionpoints--;
         return true;
     }
@@ -97,12 +127,29 @@ bool Creature::attack(Creature *creature)
 
 //------------------------------------------------------------
 
-void Creature::acceptDamage(int dmg)
+void Creature::acceptDamage(int dmg, DamageType::DamageType damageType)
 {
-    if(dmg <= 0)
+    if (dmg <= 0)
         return;
 
-    dmg = int(float(dmg) / 100 * dmg);
+    if((damageType & DamageType::damageLong) &&
+       (damageType & DamageType::damageNear))
+        return;
+
+    int absorption = dmg;
+
+    if (damageType & DamageType::damageFire)
+        dmg = dmg * dna.getGenValue(DNA::defenceFire) / 100;
+
+    if (damageType & DamageType::damageIce)
+        dmg = dmg * dna.getGenValue(DNA::defenceIce) / 100;
+
+    if (damageType & DamageType::damageLong)
+        dmg = dmg * dna.getGenValue(DNA::defenceLong) / 100;
+
+    if (damageType & DamageType::damageNear)
+        dmg = dmg * dna.getGenValue(DNA::defenceNear) / 100;
+
     HP -= dmg;
 
     if (HP < 0)

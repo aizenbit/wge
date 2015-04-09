@@ -12,11 +12,9 @@ class Creature : public QObject
 {
     Q_OBJECT
 
-private:
+private:   
     DNA dna;
     int HP;
-    int defence;
-    int damage;
     int mapSize;
     int actionpoints;
     CellType::CellType **map;
@@ -29,8 +27,8 @@ public:
     ~Creature();
     const QPoint getPosition() const;
     bool move(Direction::Direction directionX, Direction::Direction directionY);
-    bool attack(Creature *creature);
-    void acceptDamage(int dmg);
+    bool attack(Creature *creature, DamageType::DamageType damageType);
+    void acceptDamage(int dmg, DamageType::DamageType damageType);
     bool findWayTo(int x, int y);
     int stepByWay();
     const std::vector<QPoint> getWay() const;
