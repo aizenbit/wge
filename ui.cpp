@@ -11,15 +11,15 @@ UI::UI(QWidget *parent)
 
     strVector.append(tr("HP"));
     strVector.append(tr("Defence"));
-    strVector.append(tr("DefenceIce"));
-    strVector.append(tr("DefenceFire"));
-    strVector.append(tr("DefenceLong"));
-    strVector.append(tr("DefenceNear"));
+    strVector.append(tr("Ice Defence"));
+    strVector.append(tr("Fire Defence"));
+    strVector.append(tr("Long Defence"));
+    strVector.append(tr("Near Defence"));
     strVector.append(tr("Damage"));
-    strVector.append(tr("DamageIce"));
-    strVector.append(tr("DamageFire"));
-    strVector.append(tr("DamageLong"));
-    strVector.append(tr("DamageNear"));
+    strVector.append(tr("Ice Damage"));
+    strVector.append(tr("Fire Damage"));
+    strVector.append(tr("Long Damage"));
+    strVector.append(tr("Near Damage"));
     strVector.append(tr("Action Points"));
     strVector.append(tr("DNA Points"));
     strVector.append(tr("Defence Points"));
@@ -56,15 +56,34 @@ UI::UI(QWidget *parent)
     for (int i = 0; i < 4; i++)
         hblMap[strVector[7 + i]]->insertWidget(0, rbMap[strVector[7 + i]]);
 
-    int j = 0;
+    int j = -1;
     for (int i = 0; i < 15; i++)
     {
-        if(i == 1 || i == 6)
+        j++;
+        if(i == 1 || i == 6)            
             continue;
         sbMap.insert(strVector[j], new QSpinBox());
         hblMap[strVector[i]]->addWidget(sbMap[strVector[j]]);
-        j++;
     }
+
+    sbMap["HP"]->setMaximum(1000);
+    sbMap["Ice Defence"]->setMaximum(100);
+    sbMap["Fire Defence"]->setMaximum(100);
+    sbMap["Long Defence"]->setMaximum(100);
+    sbMap["Near Defence"]->setMaximum(100);
+    sbMap["Ice Damage"]->setMaximum(100);
+    sbMap["Fire Damage"]->setMaximum(100);
+    sbMap["Long Damage"]->setMaximum(100);
+    sbMap["Near Damage"]->setMaximum(100);
+    sbMap["Action Points"]->setMaximum(9);
+    sbMap["DNA Points"]->setMaximum(200);
+    sbMap["Defence Points"]->setMaximum(100);
+    sbMap["Damage Points"]->setMaximum(100);
+
+    setsbMapSuffix(true);
+
+    for(QSpinBox * sb : sbMap)
+        sb->setMinimum(0);
 
     button = new QPushButton(tr("Next Move"));
 
@@ -118,3 +137,24 @@ UI::~UI()
 
 //------------------------------------------------------------
 
+void UI::setsbMapSuffix(bool set)
+{
+    if (set)
+    {
+        sbMap["HP"]->setSuffix("/1000");
+        sbMap["Ice Defence"]->setSuffix(QString("/100"));
+        sbMap["Fire Defence"]->setSuffix(QString("/100"));
+        sbMap["Long Defence"]->setSuffix(QString("/100"));
+        sbMap["Near Defence"]->setSuffix(QString("/100"));
+        sbMap["Ice Damage"]->setSuffix(QString("/100"));
+        sbMap["Fire Damage"]->setSuffix(QString("/100"));
+        sbMap["Long Damage"]->setSuffix(QString("/100"));
+        sbMap["Near Damage"]->setSuffix(QString("/100"));
+        sbMap["Action Points"]->setSuffix(QString("/9"));
+        sbMap["DNA Points"]->setSuffix(QString("/200"));
+        sbMap["Defence Points"]->setSuffix(QString("/100"));
+        sbMap["Damage Points"]->setSuffix(QString("/100"));
+    } else
+        for (QSpinBox * sb : sbMap)
+            sb->setSuffix("");
+}

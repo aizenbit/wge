@@ -21,6 +21,7 @@ private:
         QColor(255, 140, 0)};
 
     const int mapSize {65}; //must be (power of 2) + 1
+    int cellSize {10};
     CellType::CellType ** map;
     QPoint curCellPos;
 
@@ -42,8 +43,10 @@ private:
 
     //
     virtual void mousePressEvent(QMouseEvent *);
+    virtual void mouseDoubleClickEvent(QMouseEvent *);
     void showToolTip(QMouseEvent *);
     void selectCell(QMouseEvent *);
+    void movePlayer(QMouseEvent *);
 
 public:
     explicit GameMechanics(QWidget *parent = 0);

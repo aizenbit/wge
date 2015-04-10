@@ -2,8 +2,7 @@
 
 GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 {
-    //each cell holds at least 10 pixels
-    this->setMinimumSize(mapSize * 10, mapSize * 10);
+    this->setMinimumSize(mapSize * cellSize, mapSize * cellSize);
 
     map = new CellType::CellType*[mapSize];
     for (int i = 0; i < mapSize; i++)
@@ -19,9 +18,10 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 
     player = new Creature(map, mapSize);
 
+
     //for debug
-    player->move(Direction::right, Direction::down);
-    player->move(Direction::right, Direction::down);
+    //player->move(Direction::right, Direction::down);
+    //player->move(Direction::right, Direction::down);
 
     for(int i = 0; i < mapSize-20; i++)
         map[i][20] = CellType::wall;
@@ -31,7 +31,7 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     creature1.findWayTo(50,60);
     enemy.push_back(creature1);
     //enemy.push_back(creature2);
-    player->attack(&creature1, Damage::Type(Damage::Near | Damage::Fire));
+    //player->attack(&creature1, Damage::Type(Damage::Near | Damage::Fire));
 }
 
 //------------------------------------------------------------
@@ -226,7 +226,7 @@ void GameMechanics::paintEvent(QPaintEvent *)
 
     paintMap(painter);
     paintEnemy(painter);
-    //paintWay(painter, enemy.front());
+    paintWay(painter, *player);
     paintPlayer(painter);
     paintCelectedCell(painter);
 
@@ -321,10 +321,18 @@ void GameMechanics::paintCelectedCell(QPainter &painter)
 
 void GameMechanics::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::RightButton)
+    if (event->button() == Qt::MiddleButton)
         showToolTip(event);
     if (event->button() == Qt::LeftButton)
         selectCell(event);
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+        movePlayer(event);
 }
 
 //------------------------------------------------------------
@@ -353,5 +361,15 @@ void GameMechanics::selectCell(QMouseEvent *event)
     int j = pos.y() / (this->height() / float(mapSize));
 
     curCellPos = QPoint(i,j);
+    repaint();
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::movePlayer(QMouseEvent *event)
+{
+    int x = event->pos().x() / cellSize;
+    int y = event->pos().y() / cellSize;
+    player->moveTo(x, y);
     repaint();
 }

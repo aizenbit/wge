@@ -21,6 +21,9 @@ private:
     QVBoxLayout *dataLayout;
     QHBoxLayout *mainLayout;
 
+private slots:
+    void setsbMapSuffix(bool);
+
 public:
     UI(QWidget *parent = 0);
     ~UI();

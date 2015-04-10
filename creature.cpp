@@ -7,7 +7,7 @@ Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObje
     //get DNA information
     HP = dna.getGenValue(DNA::HP);
     actionpoints = dna.getGenValue(DNA::actionpoints);
-
+    actionpoints = 50;
     position = QPoint(0,0);
 
     map = m;
@@ -71,6 +71,27 @@ bool Creature::move(Direction::Direction directionX, Direction::Direction direct
     position.rx() += directionX;
     position.ry() += directionY;
     actionpoints--;
+
+    return true;
+}
+
+//------------------------------------------------------------
+
+bool Creature::moveTo(int x, int y)
+{
+    if (!findWayTo(x,y))
+        return false;
+
+    if(way.size() > actionpoints)
+        return false;
+
+    while (!way.empty() && actionpoints > 0)
+    {
+        position.rx() = way.back().x();
+        position.ry() = way.back().y();
+        way.erase(way.end());
+        actionpoints--;
+    }
 
     return true;
 }
@@ -225,6 +246,7 @@ bool Creature::findWayTo(int x, int y)
         //calculate direction vector
         int xDirection = myX - tx;
         int yDirection = myY - ty;
+        calculateDirection(QPoint(way.back()), position, xDirection, yDirection);
 
         if(abs(xDirection) > abs(yDirection))
         {
@@ -284,6 +306,35 @@ bool Creature::findWayTo(int x, int y)
     delete [] labelMap;
 
     return true;
+}
+
+//------------------------------------------------------------
+
+void Creature::calculateDirection(QPoint myPos, QPoint targetPos,
+                                   int & xDir,
+                                   int & yDir)
+{
+    int xDirection = targetPos.x() - myPos.x();
+    int yDirection = targetPos.y() - myPos.y();
+
+    if(abs(xDirection) > abs(yDirection))
+    {
+        yDirection = 0;
+        xDirection /= abs(xDirection);
+    }
+    else
+        if (abs(xDirection) < abs(yDirection))
+        {
+            xDirection = 0;
+            yDirection /= abs(yDirection);
+        }
+        else
+        {
+            xDirection /= abs(xDirection);
+            yDirection /= abs(yDirection);
+        }
+    xDir = xDirection;
+    yDir = yDirection;
 }
 
 //------------------------------------------------------------
