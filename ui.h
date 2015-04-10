@@ -11,9 +11,15 @@ class UI : public QWidget
 
 private:
     GameMechanics *gameMechanics;
-    QPushButton *stepPB;
+    QPushButton *button;
+    QMap <QString, QRadioButton*> rbMap;
+    QMap <QString, QLabel*> lblMap;
+    QMap <QString, QSpinBox*> sbMap;
+    QMap <QString, QHBoxLayout*> hblMap;
+    QButtonGroup *distanceGroup, *elementGroup;
     QScrollArea *scrollArea;
-    QVBoxLayout *mainLayout;
+    QVBoxLayout *dataLayout;
+    QHBoxLayout *mainLayout;
 
 public:
     UI(QWidget *parent = 0);

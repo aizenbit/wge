@@ -1,6 +1,5 @@
 #include "gamemechanics.h"
 
-
 GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 {
     //each cell holds at least 10 pixels

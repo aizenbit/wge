@@ -10,19 +10,23 @@ class DNA : public QObject
 
 public:
     enum GenType {
-        dnaPoints,      //= HP + defP + damP + ap * 10
         HP,
-        defencePoints,  //= (defF + defI) && (defL + defN)
+
         defenceFire,
         defenceIce,
         defenceLong,
         defenceNear,
-        damagePoints,   //= (damF + damI) && (damL + damN)
+
         damageFire,
         damageIce,
         damageLong,
         damageNear,
+
         actionpoints,
+        dnaPoints,      //= HP + defP + damP + ap * 10
+        defencePoints,  //= (defF + defI) && (defL + defN)
+        damagePoints,   //= (damF + damI) && (damL + damN)
+
         genTypeCount
     };
 
