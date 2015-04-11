@@ -19,6 +19,7 @@ private:
     int actionpoints;
     CellType::CellType **map;
     std::vector<QPoint> way;
+    bool isAlive;
 
 
 public:
@@ -35,6 +36,7 @@ public:
                              int &xDir, int &yDir);
     int stepByWay();
     const std::vector<QPoint> getWay() const;
+    bool isDead() const;
 
     QPoint position;
 

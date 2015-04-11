@@ -12,6 +12,7 @@ Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObje
 
     map = m;
     mapSize = mS;
+    isAlive = true;
 
 }
 
@@ -29,6 +30,8 @@ Creature::Creature(const Creature &creature) : QObject(creature.parent())
     mapSize = creature.mapSize;
 
     way = creature.way;
+
+    isAlive = creature.isAlive;
 }
 
 //------------------------------------------------------------
@@ -175,7 +178,17 @@ void Creature::acceptDamage(int dmg, Damage::Type damageType)
     HP -= dmg;
 
     if (HP < 0)
+    {
         HP = 0;
+        isAlive = false;
+    }
+}
+
+//------------------------------------------------------------
+
+bool Creature::isDead() const
+{
+    return !isAlive;
 }
 
 //------------------------------------------------------------

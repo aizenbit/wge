@@ -237,6 +237,7 @@ void GameMechanics::paintEvent(QPaintEvent *)
     //paintWay(painter, *player);
     paintPlayer(painter);
     paintCelectedCell(painter);
+    paintDead(painter);
     if (attack)
         paintAttack(painter);
 
@@ -327,6 +328,21 @@ void GameMechanics::paintAttack(QPainter &painter)
     painter.drawLine(attacker, defender);
 
     attack = false;
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::paintDead(QPainter &painter)
+{
+    painter.setPen(Qt::black);
+    painter.setBrush(Qt::DiagCrossPattern);
+
+    for(Creature &creature : enemy)
+        if(creature.isDead())
+            painter.drawRect(creature.getPosition().x() * cellSize,
+                             creature.getPosition().y() * cellSize,
+                             cellSize,
+                             cellSize);
 }
 
 //------------------------------------------------------------

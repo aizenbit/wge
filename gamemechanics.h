@@ -47,6 +47,7 @@ private:
     void paintWay(QPainter &painter, const Creature &creature);
     void paintCelectedCell(QPainter &painter);
     void paintAttack(QPainter &painter);
+    void paintDead(QPainter &painter);
 
     void delay(int msec);
 
