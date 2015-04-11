@@ -15,6 +15,7 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     generateMap();
 
     curCellPos = QPoint(0,0);
+    attack = false;
 
     player = new Creature(map, mapSize);
 
@@ -37,6 +38,8 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     connect(player, SIGNAL(paint(int)), this, SLOT(paint(int)));
     for (Creature &creature : enemy)
         connect(&creature, SIGNAL(paint(int)), this, SLOT(paint(int)));
+    connect(player, SIGNAL(paintAttack(QPoint, QPoint, Damage::Type)),
+            this, SLOT(paintAttack(QPoint, QPoint, Damage::Type)));
 }
 
 //------------------------------------------------------------
@@ -234,6 +237,8 @@ void GameMechanics::paintEvent(QPaintEvent *)
     //paintWay(painter, *player);
     paintPlayer(painter);
     paintCelectedCell(painter);
+    if (attack)
+        paintAttack(painter);
 
     painter.end();
 }
@@ -242,50 +247,42 @@ void GameMechanics::paintEvent(QPaintEvent *)
 
 void GameMechanics::paintMap(QPainter &painter)
 {
-    float cellWidth = this->width() / float(mapSize);
-    float cellHeight = this->height() / float(mapSize);
-
     for (int i = 0; i < mapSize; i++) //paint cells according to cell types
         for (int j = 0; j < mapSize; j++)
         {
                 painter.setBrush(cellColor[getCell(i, j)]);
                 painter.setPen(cellColor[getCell(i, j)]);
-                painter.drawRect(i * cellWidth, j * cellHeight,
-                                 cellWidth, cellHeight);
+                painter.drawRect(i * cellSize, j * cellSize,
+                                 cellSize, cellSize);
         }
+    this->setMinimumSize(cellSize * mapSize, cellSize * mapSize);
 }
 
 //------------------------------------------------------------
 
 void GameMechanics::paintPlayer(QPainter &painter)
 {
-    float cellWidth = this->width() / float(mapSize);
-    float cellHeight = this->height() / float(mapSize);
-
     painter.setBrush(cellColor[CellType::busyByPlayer]);
     painter.setPen(cellColor[CellType::busyByPlayer]);
 
-    painter.drawRect(player->getPosition().x() * cellWidth,
-                     player->getPosition().y() * cellHeight,
-                     cellWidth,
-                     cellHeight);
+    painter.drawRect(player->getPosition().x() * cellSize,
+                     player->getPosition().y() * cellSize,
+                     cellSize,
+                     cellSize);
 }
 
 //------------------------------------------------------------
 
 void GameMechanics::paintEnemy(QPainter &painter)
 {
-    float cellWidth = this->width() / float(mapSize);
-    float cellHeight = this->height() / float(mapSize);
-
     painter.setBrush(cellColor[CellType::busyByEnemy]);
     painter.setPen(cellColor[CellType::busyByEnemy]);
 
     for (Creature creature : enemy)
     {
-        int xb = creature.getPosition().x() * cellWidth;
-        int yb = creature.getPosition().y() * cellWidth;
-        painter.drawRect(xb, yb, cellWidth, cellHeight);
+        int xb = creature.getPosition().x() * cellSize;
+        int yb = creature.getPosition().y() * cellSize;
+        painter.drawRect(xb, yb, cellSize, cellSize);
     }
 }
 
@@ -293,33 +290,43 @@ void GameMechanics::paintEnemy(QPainter &painter)
 
 void GameMechanics::paintWay(QPainter &painter, const Creature &creature)
 {
-    float cellWidth = this->width() / float(mapSize);
-    float cellHeight = this->height() / float(mapSize);
-
     painter.setBrush(Qt::yellow);
     painter.setPen(Qt::yellow);
 
     for (QPoint point : creature.getWay())
-        painter.drawRect(point.x() * cellWidth,
-                         point.y() * cellHeight,
-                         cellWidth,
-                         cellHeight);
+        painter.drawRect(point.x() * cellSize,
+                         point.y() * cellSize,
+                         cellSize,
+                         cellSize);
 }
 
 //------------------------------------------------------------
 
 void GameMechanics::paintCelectedCell(QPainter &painter)
 {
-    float cellWidth = this->width() / float(mapSize);
-    float cellHeight = this->height() / float(mapSize);
-
     painter.setBrush(Qt::NoBrush);
     painter.setPen(Qt::white);
 
-    painter.drawRect(curCellPos.x() * cellWidth,
-                     curCellPos.y() * cellHeight,
-                     cellWidth,
-                     cellHeight);
+    painter.drawRect(curCellPos.x() * cellSize,
+                     curCellPos.y() * cellSize,
+                     cellSize,
+                     cellSize);
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::paintAttack(QPainter &painter)
+{
+    painter.setPen(Qt::gray);
+
+    if (damageType & Damage::Fire)
+        painter.setPen(Qt::red);
+    if (damageType & Damage::Ice)
+        painter.setPen(Qt::blue);
+
+    painter.drawLine(attacker, defender);
+
+    attack = false;
 }
 
 //------------------------------------------------------------
@@ -349,6 +356,8 @@ void GameMechanics::mousePressEvent(QMouseEvent *event)
         selectCell(event);
     if (event->button() == Qt::RightButton)
         attackEnemy(event);
+
+    event->accept();
 }
 
 //------------------------------------------------------------
@@ -357,9 +366,26 @@ void GameMechanics::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
         movePlayer(event);
+
+    event->accept();
 }
 
 //------------------------------------------------------------
+
+void GameMechanics::wheelEvent(QWheelEvent *event)
+{
+    if (event->angleDelta().y() > 0)
+        cellSize++;
+    else
+        if(cellSize > 1)
+            cellSize--;
+    repaint();
+
+    event->accept();
+}
+
+//------------------------------------------------------------
+
 
 void GameMechanics::showToolTip(QMouseEvent *event)
 {
@@ -400,11 +426,27 @@ void GameMechanics::movePlayer(QMouseEvent *event)
 
 //------------------------------------------------------------
 
+void GameMechanics::paintAttack(QPoint a, QPoint b, Damage::Type dT)
+{
+    QPoint corrector(cellSize/2, cellSize/2);
+    attacker = a * cellSize;
+    defender = b * cellSize;
+    attacker += corrector;
+    defender += corrector;
+    damageType = dT;
+    attack = true;
+    repaint();
+    delay(100);
+    repaint();
+}
+
+//------------------------------------------------------------
+
 void GameMechanics::attackEnemy(QMouseEvent *event)
 {
-    QPoint pos = event->pos() / cellSize;
-    pos.rx()--;
-    pos.ry()--;
+    QPoint pos = event->pos();// / cellSize;
+    pos.rx() /= cellSize;
+    pos.ry() /= cellSize;
     for (Creature &creature : enemy)
         if (pos == creature.getPosition())
         {

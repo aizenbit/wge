@@ -40,6 +40,7 @@ public:
 
 signals:
     void paint(int delay);
+    void paintAttack(QPoint a, QPoint b, Damage::Type dT);
 
 public slots:
 };

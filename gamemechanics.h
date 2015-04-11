@@ -28,6 +28,12 @@ private:
     std::vector<Creature> enemy;
     Creature *player;
 
+    //for paintAttack
+    QPoint attacker;
+    QPoint defender;
+    Damage::Type damageType;
+    bool attack;
+
     //generate map using Diamond-Square algorythm
     void diamondSquare(float **floatMap);
     void diamond(float **floatMap, int n);
@@ -40,6 +46,8 @@ private:
     void paintPlayer(QPainter &painter);
     void paintWay(QPainter &painter, const Creature &creature);
     void paintCelectedCell(QPainter &painter);
+    void paintAttack(QPainter &painter);
+
     void delay(int msec);
 
     //
@@ -49,6 +57,7 @@ private:
     void selectCell(QMouseEvent *);
     void movePlayer(QMouseEvent *);
     void attackEnemy(QMouseEvent *);
+    void wheelEvent(QWheelEvent *);
 
 public:
     explicit GameMechanics(QWidget *parent = 0);
@@ -65,6 +74,7 @@ signals:
 
 public slots:
     void paint(int del);
+    void paintAttack(QPoint a, QPoint b, Damage::Type dT);
 };
 
 #endif // GAMEMECHANICS_H

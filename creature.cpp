@@ -123,6 +123,7 @@ bool Creature::attack(Creature *creature, Damage::Type damageType)
 
         creature->acceptDamage(dmg, damageType);
         actionpoints--;
+        emit paintAttack(position, creature->position, damageType);
         return true;
     }
 
@@ -141,6 +142,7 @@ bool Creature::attack(Creature *creature, Damage::Type damageType)
 
         creature->acceptDamage(dmg, damageType);
         actionpoints--;
+        emit paintAttack(position, creature->position, damageType);
         return true;
     }
 
