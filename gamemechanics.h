@@ -40,6 +40,7 @@ private:
     void paintPlayer(QPainter &painter);
     void paintWay(QPainter &painter, const Creature &creature);
     void paintCelectedCell(QPainter &painter);
+    void delay(int msec);
 
     //
     virtual void mousePressEvent(QMouseEvent *);
@@ -62,6 +63,7 @@ public:
 signals:
 
 public slots:
+    void paint(int del);
 };
 
 #endif // GAMEMECHANICS_H

@@ -91,6 +91,7 @@ bool Creature::moveTo(int x, int y)
         position.ry() = way.back().y();
         way.erase(way.end());
         actionpoints--;
+        emit paint(50);
     }
 
     return true;

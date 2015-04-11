@@ -39,6 +39,7 @@ public:
     QPoint position;
 
 signals:
+    void paint(int delay);
 
 public slots:
 };

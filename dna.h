@@ -47,6 +47,7 @@ public:
     unsigned getGenMaxValue(unsigned n) const;
     Gen getGen(unsigned n) const;
     void randomMutation(unsigned f, unsigned power = 50);
+    void setRandomDNA();
 
     void operator=(const DNA&);
 

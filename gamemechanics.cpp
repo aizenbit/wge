@@ -19,6 +19,7 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     player = new Creature(map, mapSize);
 
 
+
     //for debug
     //player->move(Direction::right, Direction::down);
     //player->move(Direction::right, Direction::down);
@@ -32,6 +33,10 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     enemy.push_back(creature1);
     //enemy.push_back(creature2);
     //player->attack(&creature1, Damage::Type(Damage::Near | Damage::Fire));
+
+    connect(player, SIGNAL(paint(int)), this, SLOT(paint(int)));
+    for (Creature &creature : enemy)
+        connect(&creature, SIGNAL(paint(int)), this, SLOT(paint(int)));
 }
 
 //------------------------------------------------------------
@@ -226,7 +231,7 @@ void GameMechanics::paintEvent(QPaintEvent *)
 
     paintMap(painter);
     paintEnemy(painter);
-    paintWay(painter, *player);
+    //paintWay(painter, *player);
     paintPlayer(painter);
     paintCelectedCell(painter);
 
@@ -315,6 +320,23 @@ void GameMechanics::paintCelectedCell(QPainter &painter)
                      curCellPos.y() * cellHeight,
                      cellWidth,
                      cellHeight);
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::paint(int del)
+{
+    repaint();
+    delay(del);
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::delay(int msec)
+{
+    QTime dieTime = QTime::currentTime().addMSecs(msec);
+    while( QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
 //------------------------------------------------------------

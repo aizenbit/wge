@@ -23,17 +23,51 @@ DNA::DNA(QObject *parent) : QObject(parent)
     dna[actionpoints].maxValue = 9;
     dna[dnaPoints].maxValue = 200;
 
-    for (Gen &gen: dna)
-        do
-            gen.value = rand() % gen.maxValue;
-        while (!controlDNA());
+    //setRandomDNA();
 
+    for (Gen &gen : dna)
+        do
+        gen.value = rand() % gen.maxValue;
+        while(!controlDNA());
 }
 
 //------------------------------------------------------------
 
 DNA::~DNA()
 {
+
+}
+
+//------------------------------------------------------------
+
+//fix it later
+void DNA::setRandomDNA()
+{
+    dna[dnaPoints].value = rand() % dna[dnaPoints].maxValue;
+    dna[HP].value = rand() % (1 + dna[dnaPoints].value);
+    dna[defencePoints].value = rand() % (1 + dna[dnaPoints].value - dna[HP].value);
+    dna[actionpoints].value = rand() % (1 + dna[dnaPoints].value -
+                                        dna[HP].value -
+                                        dna[defencePoints].value);
+    dna[actionpoints].value /= 10;
+    dna[damagePoints].value = rand() % (1 + dna[dnaPoints].value -
+                                        dna[HP].value -
+                                        dna[defencePoints].value -
+                                        dna[actionpoints].value * 10);
+
+    //to prevent divide by zero
+    dna[defencePoints].value++;
+    dna[damagePoints].value++;
+
+    dna[defenceFire].value = rand() % dna[defencePoints].value;
+    dna[defenceIce].value = dna[defencePoints].value - dna[defenceFire].value;
+    dna[defenceLong].value = rand() % dna[defencePoints].value;
+    dna[defenceNear].value = dna[defencePoints].value - dna[defenceLong].value;
+
+    dna[damageFire].value = rand() % dna[damagePoints].value;
+    dna[damageIce].value = dna[damagePoints].value - dna[damageFire].value;
+    dna[damageLong].value = rand() % dna[damagePoints].value;
+    dna[damageNear].value = dna[damagePoints].value - dna[damageLong].value;
 
 }
 
