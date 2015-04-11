@@ -347,6 +347,8 @@ void GameMechanics::mousePressEvent(QMouseEvent *event)
         showToolTip(event);
     if (event->button() == Qt::LeftButton)
         selectCell(event);
+    if (event->button() == Qt::RightButton)
+        attackEnemy(event);
 }
 
 //------------------------------------------------------------
@@ -394,4 +396,19 @@ void GameMechanics::movePlayer(QMouseEvent *event)
     int y = event->pos().y() / cellSize;
     player->moveTo(x, y);
     repaint();
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::attackEnemy(QMouseEvent *event)
+{
+    QPoint pos = event->pos() / cellSize;
+    pos.rx()--;
+    pos.ry()--;
+    for (Creature &creature : enemy)
+        if (pos == creature.getPosition())
+        {
+            player->attack(&creature, Damage::Type(Damage::Fire | Damage::Long));
+            break;
+        }
 }

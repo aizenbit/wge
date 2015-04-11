@@ -38,6 +38,7 @@ public:
 private:
     std::vector<Gen> dna;
     bool controlDNA();
+    void correctGenValue(GenType type);
 
 
 public:

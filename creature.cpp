@@ -131,7 +131,7 @@ bool Creature::attack(Creature *creature, Damage::Type damageType)
         if (distance >= longDamageDistance)
             return false;
 
-        int dmg = dna.getGenValue(DNA::damageLong) * logf(abs(distance - longDamageDistance));
+        int dmg = dna.getGenValue(DNA::damageLong);// * logf(abs(distance - longDamageDistance));
 
         if(damageType & Damage::Fire)
             dmg += dna.getGenValue(DNA::damageFire);

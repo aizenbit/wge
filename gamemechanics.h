@@ -48,6 +48,7 @@ private:
     void showToolTip(QMouseEvent *);
     void selectCell(QMouseEvent *);
     void movePlayer(QMouseEvent *);
+    void attackEnemy(QMouseEvent *);
 
 public:
     explicit GameMechanics(QWidget *parent = 0);
