@@ -7,8 +7,6 @@ UI::UI(QWidget *parent)
 {
     gameMechanics = new GameMechanics();
 
-    QVector <QString> strVector;
-
     strVector.append(tr("HP"));
     strVector.append(tr("Defence"));
     strVector.append(tr("Ice Defence"));
@@ -24,7 +22,6 @@ UI::UI(QWidget *parent)
     strVector.append(tr("DNA Points"));
     strVector.append(tr("Defence Points"));
     strVector.append(tr("Damage Points"));
-
 
     for(int i = 0; i < 15; i++)
         hblMap.insert(strVector[i], new QHBoxLayout());
@@ -53,36 +50,30 @@ UI::UI(QWidget *parent)
     elementGroup->addButton(rbMap[strVector[9]]);
     elementGroup->addButton(rbMap[strVector[10]]);
 
+
+
     for (int i = 0; i < 4; i++)
         hblMap[strVector[7 + i]]->insertWidget(0, rbMap[strVector[7 + i]]);
 
-    int j = -1;
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < DNA::genTypeCount; i++)
     {
-        j++;
-        if(i == 1 || i == 6)            
-            continue;
-        sbMap.insert(strVector[j], new QSpinBox());
-        hblMap[strVector[i]]->addWidget(sbMap[strVector[j]]);
+        sbVector.push_back(new QSpinBox());
+        sbVector[i]->setMaximum(gameMechanics->getPlayer().getDNA().getGenMaxValue(i));
     }
 
-    sbMap["HP"]->setMaximum(1000);
-    sbMap["Ice Defence"]->setMaximum(100);
-    sbMap["Fire Defence"]->setMaximum(100);
-    sbMap["Long Defence"]->setMaximum(100);
-    sbMap["Near Defence"]->setMaximum(100);
-    sbMap["Ice Damage"]->setMaximum(100);
-    sbMap["Fire Damage"]->setMaximum(100);
-    sbMap["Long Damage"]->setMaximum(100);
-    sbMap["Near Damage"]->setMaximum(100);
-    sbMap["Action Points"]->setMaximum(9);
-    sbMap["DNA Points"]->setMaximum(200);
-    sbMap["Defence Points"]->setMaximum(100);
-    sbMap["Damage Points"]->setMaximum(100);
+    int j = 0;
+    for (int i = 0; i < 15; i++)
+    {
+        if(i == 1 || i == 6)            
+            continue;
+        hblMap[strVector[i]]->addWidget(sbVector[j]);
+        j++;
+    }
 
     setsbMapSuffix(true);
+    setsbData();
 
-    for(QSpinBox * sb : sbMap)
+    for(QSpinBox * sb : sbVector)
         sb->setMinimum(0);
 
     button = new QPushButton(tr("Next Move"));
@@ -120,7 +111,7 @@ UI::~UI()
     for (QRadioButton *rb : rbMap)
         delete rb;
 
-    for (QSpinBox *sb : sbMap)
+    for (QSpinBox *sb : sbVector)
         delete sb;
 
     for (QLabel *lbl : lblMap)
@@ -141,20 +132,21 @@ void UI::setsbMapSuffix(bool set)
 {
     if (set)
     {
-        sbMap["HP"]->setSuffix("/1000");
-        sbMap["Ice Defence"]->setSuffix(QString("/100"));
-        sbMap["Fire Defence"]->setSuffix(QString("/100"));
-        sbMap["Long Defence"]->setSuffix(QString("/100"));
-        sbMap["Near Defence"]->setSuffix(QString("/100"));
-        sbMap["Ice Damage"]->setSuffix(QString("/100"));
-        sbMap["Fire Damage"]->setSuffix(QString("/100"));
-        sbMap["Long Damage"]->setSuffix(QString("/100"));
-        sbMap["Near Damage"]->setSuffix(QString("/100"));
-        sbMap["Action Points"]->setSuffix(QString("/9"));
-        sbMap["DNA Points"]->setSuffix(QString("/200"));
-        sbMap["Defence Points"]->setSuffix(QString("/100"));
-        sbMap["Damage Points"]->setSuffix(QString("/100"));
+        for (int i = 0; i < DNA::genTypeCount; i++)
+            sbVector[i]->setSuffix(QString("/%1").arg(gameMechanics->getPlayer()
+                                                 .getDNA()
+                                                 .getGenMaxValue(i)));
     } else
-        for (QSpinBox * sb : sbMap)
+        for (QSpinBox * sb : sbVector)
             sb->setSuffix("");
+}
+
+//------------------------------------------------------------
+
+void UI::setsbData()
+{
+    const Creature p = gameMechanics->getPlayer();
+
+    for (int i = 0; i < DNA::genTypeCount; i++)
+        sbVector[i]->setValue(p.getDNA().getGenValue(i));
 }

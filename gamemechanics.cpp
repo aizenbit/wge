@@ -79,6 +79,13 @@ CellType::CellType GameMechanics::getCell(int i, int j) const
 
 //------------------------------------------------------------
 
+const Creature GameMechanics::getPlayer() const
+{
+    return *player;
+}
+
+//------------------------------------------------------------
+
 void GameMechanics::generateMap(unsigned int seed)
 {
     float ** floatMap = new float*[mapSize];

@@ -14,15 +14,18 @@ private:
     QPushButton *button;
     QMap <QString, QRadioButton*> rbMap;
     QMap <QString, QLabel*> lblMap;
-    QMap <QString, QSpinBox*> sbMap;
+    QVector <QSpinBox*> sbVector;
     QMap <QString, QHBoxLayout*> hblMap;
     QButtonGroup *distanceGroup, *elementGroup;
     QScrollArea *scrollArea;
     QVBoxLayout *dataLayout;
     QHBoxLayout *mainLayout;
 
+    QVector <QString> strVector;
+
 private slots:
     void setsbMapSuffix(bool);
+    void setsbData();
 
 public:
     UI(QWidget *parent = 0);

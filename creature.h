@@ -35,8 +35,10 @@ public:
     void calculateDirection(QPoint myPos, QPoint targetPos,
                              int &xDir, int &yDir);
     int stepByWay();
+
     const std::vector<QPoint> getWay() const;
     bool isDead() const;
+    const DNA getDNA() const;
 
     QPoint position;
 

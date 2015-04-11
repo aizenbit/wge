@@ -67,6 +67,7 @@ public:
     int getMapSize() const;
     QSize getMinimumSize() const;
     CellType::CellType getCell(int i, int j) const;
+    const Creature getPlayer() const;
 
     void generateMap(unsigned int seed = 0);
 

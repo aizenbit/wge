@@ -28,6 +28,13 @@ DNA::DNA(QObject *parent) : QObject(parent)
 
 //------------------------------------------------------------
 
+DNA::DNA(const DNA &newdna) : QObject(newdna.parent())
+{
+    dna = newdna.dna;
+}
+
+//------------------------------------------------------------
+
 DNA::~DNA()
 {
 
