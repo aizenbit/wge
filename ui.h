@@ -25,7 +25,9 @@ private:
 
 private slots:
     void setsbMapSuffix(bool);
-    void setsbData();
+    void setSBData();
+    void sendSBData();
+    void sendRBData();
 
 public:
     UI(QWidget *parent = 0);

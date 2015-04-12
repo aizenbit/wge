@@ -37,9 +37,8 @@ public:
 
 private:
     std::vector<Gen> dna;
-    bool controlDNA();
-    void correctGenValue(GenType type);
 
+    void correctGenValue(GenType type);
 
 public:
     DNA(QObject *parent = 0);
@@ -50,6 +49,8 @@ public:
     Gen getGen(unsigned n) const;
     void randomMutation(unsigned f, unsigned power = 50);
     void setRandomDNA();
+    bool setGenValue(unsigned value, unsigned n);
+    bool controlDNA() const;
 
     void operator=(const DNA&);
 

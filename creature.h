@@ -39,6 +39,7 @@ public:
     const std::vector<QPoint> getWay() const;
     bool isDead() const;
     const DNA getDNA() const;
+    DNA* getrDNA();
 
     QPoint position;
 

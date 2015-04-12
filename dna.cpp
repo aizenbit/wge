@@ -10,10 +10,10 @@ DNA::DNA(QObject *parent) : QObject(parent)
     dna[defencePoints].maxValue = 100;
     dna[damagePoints].maxValue = 500;
 
-    dna[damageFire].maxValue = 100;
-    dna[damageIce].maxValue = 100;
-    dna[damageLong].maxValue = 100;
-    dna[damageNear].maxValue = 100;
+    dna[damageFire].maxValue = 200;
+    dna[damageIce].maxValue = 200;
+    dna[damageLong].maxValue = 200;
+    dna[damageNear].maxValue = 200;
 
     dna[defenceFire].maxValue = 100;
     dna[defenceIce].maxValue = 100;
@@ -52,13 +52,13 @@ void DNA::setRandomDNA()
     dna[defencePoints].value = rand() % (1 + dna[dnaPoints].value - dna[HP].value);
     correctGenValue(defencePoints);
 
-    dna[actionpoints].value = rand() % (1 + dna[dnaPoints].value -
+    dna[actionpoints].value = rand() % (2 + dna[dnaPoints].value -
                                         dna[HP].value -
                                         dna[defencePoints].value);
     dna[actionpoints].value /= 10;
     correctGenValue(actionpoints);
 
-    dna[damagePoints].value = rand() % (1 + dna[dnaPoints].value -
+    dna[damagePoints].value = rand() % (12 + dna[dnaPoints].value -
                                         dna[HP].value -
                                         dna[defencePoints].value -
                                         dna[actionpoints].value * 10);
@@ -91,7 +91,7 @@ void DNA::correctGenValue(GenType type)
 
 //------------------------------------------------------------
 
-bool DNA::controlDNA()
+bool DNA::controlDNA() const
 {
     if (dna[HP].value +
             dna[defencePoints].value +
@@ -123,6 +123,19 @@ unsigned DNA::getGenValue(unsigned n) const
 unsigned DNA::getGenMaxValue(unsigned n) const
 {
     return dna[n].maxValue;
+}
+
+//------------------------------------------------------------
+
+bool DNA::setGenValue(unsigned value, unsigned n)
+{
+    unsigned genValue = dna[n].value;
+    dna[n].value = value;
+
+    if (controlDNA())
+        return true;
+    else
+        return false;
 }
 
 //------------------------------------------------------------

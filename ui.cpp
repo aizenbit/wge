@@ -46,10 +46,13 @@ UI::UI(QWidget *parent)
     distanceGroup->addButton(rbMap[strVector[7]]);
     distanceGroup->addButton(rbMap[strVector[8]]);
 
+
     elementGroup = new QButtonGroup();
     elementGroup->addButton(rbMap[strVector[9]]);
     elementGroup->addButton(rbMap[strVector[10]]);
 
+    for (QRadioButton *rb : rbMap)
+        connect(rb, SIGNAL(clicked()), this, SLOT(sendRBData()));
 
 
     for (int i = 0; i < 4; i++)
@@ -71,12 +74,14 @@ UI::UI(QWidget *parent)
     }
 
     setsbMapSuffix(true);
-    setsbData();
+    setSBData();
+
 
     for(QSpinBox * sb : sbVector)
         sb->setMinimum(0);
 
-    button = new QPushButton(tr("Next Move"));
+    button = new QPushButton(tr("Set Data"));
+    connect(button, SIGNAL(clicked()), this, SLOT(sendSBData()));
 
     dataLayout = new QVBoxLayout();
 
@@ -143,10 +148,47 @@ void UI::setsbMapSuffix(bool set)
 
 //------------------------------------------------------------
 
-void UI::setsbData()
+void UI::setSBData()
 {
     const Creature p = gameMechanics->getPlayer();
 
     for (int i = 0; i < DNA::genTypeCount; i++)
         sbVector[i]->setValue(p.getDNA().getGenValue(i));
+}
+
+//------------------------------------------------------------
+
+void UI::sendSBData()
+{
+    for (unsigned i = 0; i < DNA::genTypeCount; i++)
+    {
+        QPalette palette(sbVector[i]->palette());
+        if (gameMechanics->getrPlayer()->getrDNA()->setGenValue(sbVector[i]->value(), i))
+            palette.setColor(QPalette::Text, Qt::black);
+        else
+            palette.setColor(QPalette::Text, Qt::red);
+        sbVector[i]->setPalette(palette);
+    }
+
+    if(!gameMechanics->getPlayer().getDNA().controlDNA())
+        button->setText(QString(tr("Set Data (error!)")));
+    else
+        button->setText(QString(tr("Set Data")));
+}
+
+//------------------------------------------------------------
+
+void UI::sendRBData()
+{
+    Damage::Type dt;
+
+    if (rbMap[strVector[7]]->isChecked())
+        dt = Damage::Ice;
+    if (rbMap[strVector[8]]->isChecked())
+        dt = Damage::Fire;
+    if (rbMap[strVector[9]]->isChecked())
+        dt = Damage::Type(dt | Damage::Long);
+    if (rbMap[strVector[10]]->isChecked())
+        dt = Damage::Type(dt | Damage::Near);
+    gameMechanics->setPlayersDT(dt);
 }

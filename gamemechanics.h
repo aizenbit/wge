@@ -34,6 +34,8 @@ private:
     Damage::Type damageType;
     bool attack;
 
+    Damage::Type playersDT;
+
     //generate map using Diamond-Square algorythm
     void diamondSquare(float **floatMap);
     void diamond(float **floatMap, int n);
@@ -68,6 +70,8 @@ public:
     QSize getMinimumSize() const;
     CellType::CellType getCell(int i, int j) const;
     const Creature getPlayer() const;
+    Creature* getrPlayer();
+
 
     void generateMap(unsigned int seed = 0);
 
@@ -77,6 +81,7 @@ signals:
 public slots:
     void paint(int del);
     void paintAttack(QPoint a, QPoint b, Damage::Type dT);
+    bool setPlayersDT(Damage::Type dt);
 };
 
 #endif // GAMEMECHANICS_H

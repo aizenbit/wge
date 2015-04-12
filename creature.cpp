@@ -64,6 +64,12 @@ const DNA Creature::getDNA() const
 
 //------------------------------------------------------------
 
+DNA* Creature::getrDNA()
+{
+    return &dna;
+}
+//------------------------------------------------------------
+
 bool Creature::move(Direction::Direction directionX, Direction::Direction directionY)
 {
     const int x = position.x();

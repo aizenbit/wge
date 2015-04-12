@@ -18,7 +18,9 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     attack = false;
 
     player = new Creature(map, mapSize);
-
+    for (int i = 0; i < DNA::genTypeCount; i++)
+        player->getrDNA()->setGenValue(0, i);
+     player->getrDNA()->setGenValue(200, DNA::dnaPoints);
 
 
     //for debug
@@ -82,6 +84,13 @@ CellType::CellType GameMechanics::getCell(int i, int j) const
 const Creature GameMechanics::getPlayer() const
 {
     return *player;
+}
+
+//------------------------------------------------------------
+
+Creature* GameMechanics::getrPlayer()
+{
+    return player;
 }
 
 //------------------------------------------------------------
@@ -473,7 +482,18 @@ void GameMechanics::attackEnemy(QMouseEvent *event)
     for (Creature &creature : enemy)
         if (pos == creature.getPosition())
         {
-            player->attack(&creature, Damage::Type(Damage::Fire | Damage::Long));
+            player->attack(&creature, Damage::Type(Damage::Long | Damage::Ice));
             break;
         }
+}
+
+//------------------------------------------------------------
+
+bool GameMechanics::setPlayersDT(Damage::Type dt)
+{
+    if (dt & (Damage::Long | Damage::Near))
+        return false;
+
+    playersDT = dt;
+    return true;
 }
