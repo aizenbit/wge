@@ -52,6 +52,8 @@ UI::UI(QWidget *parent)
 
     button = new QPushButton(tr("Set Data"));
     connect(button, SIGNAL(clicked()), this, SLOT(sendSBData()));
+    connect(gameMechanics, SIGNAL(playersMove(bool)),
+            button, SLOT(setEnabled(bool)));
 
     damageGB = new QGroupBox(tr("Damage"));
     defenceGB = new QGroupBox(tr("Defence"));

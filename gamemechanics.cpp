@@ -510,8 +510,8 @@ void GameMechanics::showToolTip(QMouseEvent *event)
 void GameMechanics::selectCell(QMouseEvent *event)
 {
     QPoint pos = event->pos();
-    int i = pos.x() / (this->width() / float(mapSize));
-    int j = pos.y() / (this->height() / float(mapSize));
+    int i = pos.x() / cellSize;
+    int j = pos.y() / cellSize;
 
     curCellPos = QPoint(i,j);
     repaint();
@@ -607,6 +607,8 @@ void GameMechanics::enemyMove(Creature &creature)
 
 void GameMechanics::nextMove()
 {
+    emit playersMove(false);
+
     allEnemiesDead = true;
 
     player->restoreAP();
@@ -622,6 +624,7 @@ void GameMechanics::nextMove()
 
     if (allEnemiesDead || player->isDead())
         selection();
+    emit playersMove(true);
 }
 
 //------------------------------------------------------------
@@ -651,6 +654,7 @@ void GameMechanics::selection()
 
     player->position = QPoint(rand() % mapSize, rand() % mapSize);
 
-    emit newWave();
+    generateMap(enemy[0].getDamageToPlayer());
 
+    emit newWave();
 }

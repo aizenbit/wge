@@ -89,6 +89,7 @@ public:
 
 signals:
     void newWave();
+    void playersMove(bool);
 
 public slots:
     void paint(int del);
