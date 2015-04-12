@@ -10,10 +10,11 @@ Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObje
     //get DNA information
     HP = dna.getGenValue(DNA::HP);
     actionpoints = dna.getGenValue(DNA::actionpoints);
-    actionpoints = 50;
+    //actionpoints = 50;
     position = QPoint(rand() % mapSize, rand() % mapSize);
 
     isAlive = true;
+    DamageToPlayer = 0;
 }
 
 //------------------------------------------------------------
@@ -32,6 +33,7 @@ Creature::Creature(const Creature &creature) : QObject(creature.parent())
     way = creature.way;
 
     isAlive = creature.isAlive;
+    DamageToPlayer = creature.DamageToPlayer;
 }
 
 //------------------------------------------------------------
@@ -71,6 +73,28 @@ DNA* Creature::getrDNA()
 
 //------------------------------------------------------------
 
+int Creature::getDamageToPlayer() const
+{
+    return DamageToPlayer;
+}
+
+//------------------------------------------------------------
+
+void Creature::resetDamageToPlayer()
+{
+    DamageToPlayer = 0;
+}
+
+//------------------------------------------------------------
+
+void Creature::storeDamage(int dmg)
+{
+    DamageToPlayer += dmg;
+}
+
+//------------------------------------------------------------
+
+
 int Creature::getAP() const
 {
     return actionpoints;
@@ -81,6 +105,14 @@ int Creature::getAP() const
 int Creature::getHP() const
 {
     return HP;
+}
+
+//------------------------------------------------------------
+
+void Creature::liven()
+{
+    HP = dna.getGenValue(DNA::HP);
+    isAlive = true;
 }
 
 //------------------------------------------------------------
@@ -113,9 +145,6 @@ bool Creature::moveTo(int x, int y)
     if (!findWayTo(x,y))
         return false;
 
-    if(way.size() > actionpoints)
-        return false;
-
     while (!way.empty() && actionpoints > 0)
     {
         position.rx() = way.back().x();
@@ -124,6 +153,9 @@ bool Creature::moveTo(int x, int y)
         actionpoints--;
         emit paint(50);
     }
+
+    if(way.size() > actionpoints)
+        return false;
 
     return true;
 }
@@ -205,7 +237,10 @@ void Creature::acceptDamage(int dmg, Damage::Type damageType)
 
     HP -= dmg;
 
-    if (HP < 0)
+    if(dmg > 0)
+        emit damaged(dmg);
+
+    if (HP <= 0)
     {
         HP = 0;
         isAlive = false;
@@ -217,6 +252,14 @@ void Creature::acceptDamage(int dmg, Damage::Type damageType)
 bool Creature::isDead() const
 {
     return !isAlive;
+}
+
+//------------------------------------------------------------
+
+void Creature::updateVariables()
+{
+    HP = dna.getGenValue(DNA::HP);
+    actionpoints = dna.getGenValue(DNA::actionpoints);
 }
 
 //------------------------------------------------------------

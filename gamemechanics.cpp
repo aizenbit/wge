@@ -16,6 +16,7 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 
     curCellPos = QPoint(0,0);
     attack = false;
+    allEnemiesDead = false;
 
     player = new Creature(map, mapSize);
     for (int i = 0; i < DNA::genTypeCount; i++)
@@ -25,11 +26,21 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     for (int i = 0; i <= 5; i++)
         enemy.push_back(Creature(map, mapSize));
 
-    connect(player, SIGNAL(paint(int)), this, SLOT(paint(int)));
+
     for (Creature &creature : enemy)
-        connect(&creature, SIGNAL(paint(int)), this, SLOT(paint(int)));
+    {
+        connect(&creature, SIGNAL(paint(int)),
+                this, SLOT(paint(int)));
+        connect(&creature, SIGNAL(paintAttack(QPoint, QPoint, Damage::Type)),
+                this, SLOT(paintAttack(QPoint, QPoint, Damage::Type)));
+    }
+
+    connect(player, SIGNAL(paint(int)),
+            this, SLOT(paint(int)));
     connect(player, SIGNAL(paintAttack(QPoint, QPoint, Damage::Type)),
             this, SLOT(paintAttack(QPoint, QPoint, Damage::Type)));
+    connect(player, SIGNAL(damaged(int)),
+            this, SLOT(storeDamage(int)));
 
     strVector.append(tr("HP"));
     strVector.append(tr("Fire"));   //Defence
@@ -361,6 +372,11 @@ void GameMechanics::paintDead(QPainter &painter)
                              creature.getPosition().y() * cellSize,
                              cellSize,
                              cellSize);
+    if(player->isDead())
+        painter.drawRect(player->getPosition().x() * cellSize,
+                         player->getPosition().y() * cellSize,
+                         cellSize,
+                         cellSize);
 }
 
 //------------------------------------------------------------
@@ -526,6 +542,7 @@ void GameMechanics::enemyMove(Creature &creature)
 {
     float distance = sqrtf(powf(creature.position.x() - player->position.x(), 2) +
                            powf(creature.position.y() - player->position.y(), 2));
+
     if (creature.getDNA().getGenValue(DNA::damageNear) >
         creature.getDNA().getGenValue(DNA::damageLong))
     {
@@ -556,7 +573,37 @@ void GameMechanics::enemyMove(Creature &creature)
 
 void GameMechanics::nextMove()
 {
+    allEnemiesDead = true;
+
     for(Creature &creature :  enemy)
         if (!creature.isDead())
+        {
             enemyMove(creature);
+            creature.storeDamage(currentDamage);
+            allEnemiesDead = false;
+        }
+
+    if (allEnemiesDead || player->isDead())
+        selection();
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::storeDamage(int dmg)
+{
+    currentDamage = dmg;
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::selection()
+{
+    for(Creature &creature :  enemy)
+    {
+        creature.resetDamageToPlayer();
+        creature.liven();
+    }
+
+    emit newWave();
+
 }

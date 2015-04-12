@@ -35,6 +35,8 @@ private:
     bool attack;
 
     Damage::Type playersDT;
+    int currentDamage;
+    bool allEnemiesDead;
 
     //generate map using Diamond-Square algorythm
     void diamondSquare(float **floatMap);
@@ -64,7 +66,10 @@ private:
 
     //
     void enemyMove(Creature &creature);
+    void selection();
 
+private slots:
+    void storeDamage(int);
 
 public:
     QVector <QString> strVector;
@@ -83,6 +88,7 @@ public:
 
 
 signals:
+    void newWave();
 
 public slots:
     void paint(int del);

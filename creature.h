@@ -20,6 +20,7 @@ private:
     CellType::CellType **map;
     std::vector<QPoint> way;
     bool isAlive;
+    int DamageToPlayer;
 
 
 public:
@@ -42,12 +43,18 @@ public:
     DNA* getrDNA();
     int getAP() const;
     int getHP() const;
+    int getDamageToPlayer() const;
+    void resetDamageToPlayer();
+    void storeDamage(int dmg);
+    void liven();
+    void updateVariables();
 
     QPoint position;
 
 signals:
     void paint(int delay);
     void paintAttack(QPoint a, QPoint b, Damage::Type dT);
+    void damaged(int damage);
 
 public slots:
 };

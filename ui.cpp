@@ -7,6 +7,8 @@ UI::UI(QWidget *parent)
 {
     gameMechanics = new GameMechanics();
 
+    connect(gameMechanics, SIGNAL(newWave()), this, SLOT(newWave()));
+
     for(int i = 0; i < DNA::genTypeCount; i++)
         hblVector.push_back(new QHBoxLayout());
 
@@ -158,10 +160,24 @@ void UI::sendSBData()
         sbVector[i]->setPalette(palette);
     }
 
+    gameMechanics->getrPlayer()->updateVariables();
+
     if(!gameMechanics->getPlayer().getDNA().controlDNA())
         button->setText(QString(tr("Set Data (error!)")));
     else
-        button->setText(QString(tr("Set Data")));
+    {
+        for(QSpinBox *sb : sbVector)
+        {
+            sb->setReadOnly(true);
+            QPalette palette(sb->palette());
+            palette.setColor(QPalette::Text, Qt::black);
+            sb->setPalette(palette);
+        }
+
+        button->setText(QString(tr("Next Move")));
+        disconnect(button, SIGNAL(clicked()), this, SLOT(sendSBData()));
+        connect(button, SIGNAL(clicked()), gameMechanics, SLOT(nextMove()));
+    }
 }
 
 //------------------------------------------------------------
@@ -180,4 +196,16 @@ void UI::sendRBData()
         dt = Damage::Type(dt | Damage::Near);
 
     gameMechanics->setPlayersDT(dt);
+}
+
+//------------------------------------------------------------
+
+void UI::newWave()
+{
+    button->setText(QString(tr("Set Data")));
+    for(QSpinBox *sb : sbVector)
+        sb->setReadOnly(false);
+    disconnect(button, SIGNAL(clicked()), gameMechanics, SLOT(nextMove()));
+    connect(button, SIGNAL(clicked()), this, SLOT(sendSBData()));
+    gameMechanics->getrPlayer()->liven();
 }

@@ -27,6 +27,7 @@ private slots:
     void setSBData();
     void sendSBData();
     void sendRBData();
+    void newWave();
 
 public:
     UI(QWidget *parent = 0);
