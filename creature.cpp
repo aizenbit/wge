@@ -180,8 +180,8 @@ bool Creature::attack(Creature *creature, Damage::Type damageType)
         return false;
 
     const QPoint enemyPos = creature->getPosition();
-    const int nearDamageDistance = 10;
-    const int longDamageDistance = 25;
+    const int nearDamageDistance = 20;
+    const int longDamageDistance = 40;
 
     float distance = sqrtf(powf(enemyPos.x() - position.x(), 2) +
                            powf(enemyPos.y() - position.y(), 2));
@@ -408,6 +408,14 @@ bool Creature::findWayTo(int x, int y)
         delete[] labelMap[i];
     delete [] labelMap;
 
+    for(QPoint p :way)
+        if(p.x() < 0 || p.x() > mapSize ||
+           p.y() < 0 || p.y() > mapSize)
+        {
+            way.clear();
+            return false;
+        }
+
     return true;
 }
 
@@ -467,11 +475,13 @@ int Creature::stepByWay()
 
 bool Creature::operator <(const Creature & creature) const
 {
-    if (DamageToPlayer < creature.DamageToPlayer)
+    if (DamageToPlayer > creature.DamageToPlayer)
         return true;
     else
         return false;
 }
+
+//------------------------------------------------------------
 
 void Creature::operator =(const Creature & creature)
 {

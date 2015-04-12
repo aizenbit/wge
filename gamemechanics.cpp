@@ -404,9 +404,9 @@ void GameMechanics::paint(int del)
 
 void GameMechanics::delay(int msec)
 {
-    QTime dieTime = QTime::currentTime().addMSecs(msec);
+    /*QTime dieTime = QTime::currentTime().addMSecs(msec);
     while( QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);*/
 }
 
 //------------------------------------------------------------
@@ -580,7 +580,7 @@ void GameMechanics::enemyMove(Creature &creature)
     if (creature.getDNA().getGenValue(DNA::damageNear) >
         creature.getDNA().getGenValue(DNA::damageLong))
     {
-        if(distance > 10)
+        if(distance >= 20)
             creature.moveTo(player->position.x(), player->position.y());
         while(creature.getAP() > 0)
             if (creature.getDNA().getGenValue(DNA::damageFire) >
@@ -591,7 +591,7 @@ void GameMechanics::enemyMove(Creature &creature)
     }
     else
     {
-        if(distance > 25)
+        if(distance >= 40)
             creature.moveTo(player->position.x(), player->position.y());
 
         while(creature.getAP() > 0)
@@ -618,7 +618,9 @@ void GameMechanics::nextMove()
         {
             enemyMove(creature);
             creature.storeDamage(currentDamage);
+            currentDamage = 0;
             allEnemiesDead = false;
+
             creature.restoreAP();
         }
 
@@ -631,7 +633,7 @@ void GameMechanics::nextMove()
 
 void GameMechanics::storeDamage(int dmg)
 {
-    currentDamage = dmg;
+    currentDamage += dmg;
 }
 
 //------------------------------------------------------------
@@ -640,10 +642,30 @@ void GameMechanics::selection()
 {
     std::sort(enemy.begin(), enemy.end());
 
-    for(unsigned i = enemy.size() / 3; i < enemy.size(); i++)
+    generateMap(enemy[0].getDamageToPlayer());
+
+    QFile file("enemydata.txt");
+    QTextStream stream(&file);
+    file.open(QIODevice::Append);
+
+    for(unsigned i = 0; i < enemy.size(); i++)
+        if(enemy[i].getDamageToPlayer() > 0)
+        stream << QString(tr("enemy[%1]; DamN/I/L/F: %2/%3/%4/%5 dtP: %6 \r\n"))
+                     .arg(i)
+                     .arg(enemy[i].getDNA().getGenValue(DNA::damageNear))
+                     .arg(enemy[i].getDNA().getGenValue(DNA::damageIce))
+                     .arg(enemy[i].getDNA().getGenValue(DNA::damageLong))
+                     .arg(enemy[i].getDNA().getGenValue(DNA::damageFire))
+                     .arg(enemy[i].getDamageToPlayer());
+    stream << tr("\r\n");
+
+    for(unsigned i = enemy.size() / 2; i < enemy.size(); i++)
     {
-        enemy[i].getrDNA()->setRandomDNA();
+        enemy[i] = enemy[i - enemy.size() / 2];
+        enemy[i].getrDNA()->randomMutation(DNA::genTypeCount);
     }
+
+    file.close();
 
     for(Creature &creature : enemy)
     {
@@ -653,8 +675,6 @@ void GameMechanics::selection()
     }
 
     player->position = QPoint(rand() % mapSize, rand() % mapSize);
-
-    generateMap(enemy[0].getDamageToPlayer());
 
     emit newWave();
 }
