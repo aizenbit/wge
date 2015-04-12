@@ -40,6 +40,8 @@ public:
     bool isDead() const;
     const DNA getDNA() const;
     DNA* getrDNA();
+    int getAP() const;
+    int getHP() const;
 
     QPoint position;
 

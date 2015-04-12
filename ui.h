@@ -22,8 +22,6 @@ private:
     QVBoxLayout *dataLayout, *damageLayout, *defenceLayout;
     QHBoxLayout *mainLayout;
 
-    QVector <QString> strVector;
-
 private slots:
     void setsbMapSuffix(bool);
     void setSBData();

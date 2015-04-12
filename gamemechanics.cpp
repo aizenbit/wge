@@ -20,28 +20,30 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     player = new Creature(map, mapSize);
     for (int i = 0; i < DNA::genTypeCount; i++)
         player->getrDNA()->setGenValue(0, i);
-     player->getrDNA()->setGenValue(200, DNA::dnaPoints);
+    player->getrDNA()->setGenValue(200, DNA::dnaPoints);
 
-
-    //for debug
-    //player->move(Direction::right, Direction::down);
-    //player->move(Direction::right, Direction::down);
-
-    for(int i = 0; i < mapSize-20; i++)
-        map[i][20] = CellType::wall;
-
-    Creature creature1(map, mapSize);
-    //Creature creature2(map, mapSize);
-    creature1.findWayTo(50,60);
-    enemy.push_back(creature1);
-    //enemy.push_back(creature2);
-    //player->attack(&creature1, Damage::Type(Damage::Near | Damage::Fire));
+    for (int i = 0; i <= 5; i++)
+        enemy.push_back(Creature(map, mapSize));
 
     connect(player, SIGNAL(paint(int)), this, SLOT(paint(int)));
     for (Creature &creature : enemy)
         connect(&creature, SIGNAL(paint(int)), this, SLOT(paint(int)));
     connect(player, SIGNAL(paintAttack(QPoint, QPoint, Damage::Type)),
             this, SLOT(paintAttack(QPoint, QPoint, Damage::Type)));
+
+    strVector.append(tr("HP"));
+    strVector.append(tr("Fire"));   //Defence
+    strVector.append(tr("Ice"));    //Defence
+    strVector.append(tr("Long"));   //Defence
+    strVector.append(tr("Near"));   //Defence
+    strVector.append(tr("Fire"));   //Damage
+    strVector.append(tr("Ice"));    //Damage
+    strVector.append(tr("Long"));   //Damage
+    strVector.append(tr("Near"));   //Damage
+    strVector.append(tr("Action Points"));
+    strVector.append(tr("DNA Points"));
+    strVector.append(tr("Defence Points"));
+    strVector.append(tr("Damage Points"));
 }
 
 //------------------------------------------------------------
@@ -424,10 +426,29 @@ void GameMechanics::showToolTip(QMouseEvent *event)
     QPoint pos = event->pos();
     QString text;
 
-    int i = pos.x() / (this->width() / float(mapSize));
-    int j = pos.y() / (this->height() / float(mapSize));
+    int i = pos.x() / cellSize;
+    int j = pos.y() / cellSize;
 
-    text = QString(tr("(%1;%2)\n"
+    bool hereIsEnemy = false;
+
+    for(Creature &creature : enemy)
+        if (creature.position.x() == i &&
+            creature.position.y() == j)
+        {
+            text = QString("(%1;%2)\nHP: %3/%4\n")
+                    .arg(i).arg(j)
+                    .arg(creature.getHP())
+                    .arg(creature.getDNA().getGenValue(DNA::HP));
+            for (int i = DNA::defenceFire; i < DNA::genTypeCount; i++)
+                    text += strVector[i] + QString(": %1/%2\n")
+                    .arg(creature.getDNA().getGenValue(i))
+                    .arg(creature.getDNA().getGenMaxValue(i));
+            hereIsEnemy = true;
+            break;
+        }
+
+    if (!hereIsEnemy)
+        text = QString(tr("(%1;%2)\n"
                       "CellType = %3")).arg(i).arg(j)
                                        .arg(int(map[i][j]));
 
@@ -497,4 +518,45 @@ bool GameMechanics::setPlayersDT(Damage::Type dt)
 
     playersDT = dt;
     return true;
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::enemyMove(Creature &creature)
+{
+    float distance = sqrtf(powf(creature.position.x() - player->position.x(), 2) +
+                           powf(creature.position.y() - player->position.y(), 2));
+    if (creature.getDNA().getGenValue(DNA::damageNear) >
+        creature.getDNA().getGenValue(DNA::damageLong))
+    {
+        if(distance > 10)
+            creature.moveTo(player->position.x(), player->position.y());
+        while(creature.getAP() > 0)
+            if (creature.getDNA().getGenValue(DNA::damageFire) >
+                creature.getDNA().getGenValue(DNA::damageIce))
+                creature.attack(player, Damage::Type(Damage::Near | Damage::Fire));
+            else
+                creature.attack(player, Damage::Type(Damage::Near | Damage::Ice));
+    }
+    else
+    {
+        if(distance > 25)
+            creature.moveTo(player->position.x(), player->position.y());
+
+        while(creature.getAP() > 0)
+            if (creature.getDNA().getGenValue(DNA::damageFire) >
+                creature.getDNA().getGenValue(DNA::damageIce))
+                creature.attack(player, Damage::Type(Damage::Long | Damage::Fire));
+            else
+                creature.attack(player, Damage::Type(Damage::Long | Damage::Ice));
+    }
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::nextMove()
+{
+    for(Creature &creature :  enemy)
+        if (!creature.isDead())
+            enemyMove(creature);
 }

@@ -53,7 +53,7 @@ private:
 
     void delay(int msec);
 
-    //
+    //mouse and wheel events
     virtual void mousePressEvent(QMouseEvent *);
     virtual void mouseDoubleClickEvent(QMouseEvent *);
     void showToolTip(QMouseEvent *);
@@ -62,7 +62,13 @@ private:
     void attackEnemy(QMouseEvent *);
     void wheelEvent(QWheelEvent *);
 
+    //
+    void enemyMove(Creature &creature);
+
+
 public:
+    QVector <QString> strVector;
+
     explicit GameMechanics(QWidget *parent = 0);
     ~GameMechanics();
 
@@ -82,6 +88,7 @@ public slots:
     void paint(int del);
     void paintAttack(QPoint a, QPoint b, Damage::Type dT);
     bool setPlayersDT(Damage::Type dt);
+    void nextMove();
 };
 
 #endif // GAMEMECHANICS_H

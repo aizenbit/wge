@@ -4,16 +4,16 @@
 
 Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObject(parent)
 {
+    map = m;
+    mapSize = mS;
+
     //get DNA information
     HP = dna.getGenValue(DNA::HP);
     actionpoints = dna.getGenValue(DNA::actionpoints);
     actionpoints = 50;
-    position = QPoint(0,0);
+    position = QPoint(rand() % mapSize, rand() % mapSize);
 
-    map = m;
-    mapSize = mS;
     isAlive = true;
-
 }
 
 //------------------------------------------------------------
@@ -68,6 +68,21 @@ DNA* Creature::getrDNA()
 {
     return &dna;
 }
+
+//------------------------------------------------------------
+
+int Creature::getAP() const
+{
+    return actionpoints;
+}
+
+//------------------------------------------------------------
+
+int Creature::getHP() const
+{
+    return HP;
+}
+
 //------------------------------------------------------------
 
 bool Creature::move(Direction::Direction directionX, Direction::Direction directionY)
@@ -177,16 +192,16 @@ void Creature::acceptDamage(int dmg, Damage::Type damageType)
         return;
 
     if (damageType & Damage::Fire)
-        dmg = dmg * dna.getGenValue(DNA::defenceFire) / 100;
+        dmg = dmg * (100 - dna.getGenValue(DNA::defenceFire)) / 100;
 
     if (damageType & Damage::Ice)
-        dmg = dmg * dna.getGenValue(DNA::defenceIce) / 100;
+        dmg = dmg * (100 - dna.getGenValue(DNA::defenceIce)) / 100;
 
     if (damageType & Damage::Long)
-        dmg = dmg * dna.getGenValue(DNA::defenceLong) / 100;
+        dmg = dmg * (100 - dna.getGenValue(DNA::defenceLong)) / 100;
 
     if (damageType & Damage::Near)
-        dmg = dmg * dna.getGenValue(DNA::defenceNear) / 100;
+        dmg = dmg * (100 - dna.getGenValue(DNA::defenceNear)) / 100;
 
     HP -= dmg;
 

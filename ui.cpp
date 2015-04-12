@@ -7,25 +7,11 @@ UI::UI(QWidget *parent)
 {
     gameMechanics = new GameMechanics();
 
-    strVector.append(tr("HP"));
-    strVector.append(tr("Fire"));   //Defence
-    strVector.append(tr("Ice"));    //Defence
-    strVector.append(tr("Long"));   //Defence
-    strVector.append(tr("Near"));   //Defence
-    strVector.append(tr("Fire"));   //Damage
-    strVector.append(tr("Ice"));    //Damage
-    strVector.append(tr("Long"));   //Damage
-    strVector.append(tr("Near"));   //Damage
-    strVector.append(tr("Action Points"));
-    strVector.append(tr("DNA Points"));
-    strVector.append(tr("Defence Points"));
-    strVector.append(tr("Damage Points"));
-
     for(int i = 0; i < DNA::genTypeCount; i++)
         hblVector.push_back(new QHBoxLayout());
 
     for (int i = 0; i < DNA::genTypeCount; i++)
-        lblVector.push_back(new QLabel(strVector[i] + ":"));
+        lblVector.push_back(new QLabel(gameMechanics->strVector[i] + ":"));
 
     for (int i = 0; i < DNA::genTypeCount; i++)
         hblVector[i]->addWidget(lblVector[i]);
@@ -43,7 +29,7 @@ UI::UI(QWidget *parent)
     elementGroup->addButton(rbVector[1]);
 
     for (QRadioButton *rb : rbVector)
-        connect(rb, SIGNAL(pressed()), this, SLOT(sendRBData()));
+        connect(rb, SIGNAL(clicked()), this, SLOT(sendRBData()));
 
     for (int i = DNA::damageFire; i <= DNA::damageNear; i++)
         hblVector[i]->insertWidget(0, rbVector[i - DNA::damageFire]);
