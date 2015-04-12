@@ -10,7 +10,6 @@ Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObje
     //get DNA information
     HP = dna.getGenValue(DNA::HP);
     actionpoints = dna.getGenValue(DNA::actionpoints);
-    //actionpoints = 50;
     position = QPoint(rand() % mapSize, rand() % mapSize);
 
     isAlive = true;
@@ -94,6 +93,12 @@ void Creature::storeDamage(int dmg)
 
 //------------------------------------------------------------
 
+void Creature::setAP(int ap)
+{
+    actionpoints = ap;
+}
+
+//------------------------------------------------------------
 
 int Creature::getAP() const
 {
@@ -171,6 +176,9 @@ bool Creature::moveTo(int x, int y)
 
 bool Creature::attack(Creature *creature, Damage::Type damageType)
 {
+    if(actionpoints <= 0)
+        return false;
+
     const QPoint enemyPos = creature->getPosition();
     const int nearDamageDistance = 10;
     const int longDamageDistance = 25;
@@ -454,3 +462,32 @@ int Creature::stepByWay()
 
     return 0;
 }
+
+//------------------------------------------------------------
+
+bool Creature::operator <(const Creature & creature) const
+{
+    if (DamageToPlayer < creature.DamageToPlayer)
+        return true;
+    else
+        return false;
+}
+
+void Creature::operator =(const Creature & creature)
+{
+    dna = creature.dna;
+    HP = creature.HP;
+    actionpoints = creature.actionpoints;
+
+    position = creature.position;
+
+    map = creature.map;
+    mapSize = creature.mapSize;
+
+    way = creature.way;
+
+    isAlive = creature.isAlive;
+    DamageToPlayer = creature.DamageToPlayer;
+}
+
+//------------------------------------------------------------

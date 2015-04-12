@@ -8,7 +8,7 @@ DNA::DNA(QObject *parent) : QObject(parent)
     dna[HP].maxValue = 1000;
 
     dna[defencePoints].maxValue = 100;
-    dna[damagePoints].maxValue = 500;
+    dna[damagePoints].maxValue = 200;
 
     dna[damageFire].maxValue = 200;
     dna[damageIce].maxValue = 200;
@@ -21,7 +21,7 @@ DNA::DNA(QObject *parent) : QObject(parent)
     dna[defenceNear].maxValue = 100;
 
     dna[actionpoints].maxValue = 9;
-    dna[dnaPoints].maxValue = 200;
+    dna[dnaPoints].maxValue = 1000;
 
     setRandomDNA();
 }
@@ -129,7 +129,7 @@ unsigned DNA::getGenMaxValue(unsigned n) const
 
 bool DNA::setGenValue(unsigned value, unsigned n)
 {
-    unsigned genValue = dna[n].value;
+    //unsigned genValue = dna[n].value;
     dna[n].value = value;
 
     if (controlDNA())

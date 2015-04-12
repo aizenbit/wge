@@ -163,7 +163,10 @@ void UI::sendSBData()
     gameMechanics->repaint();
 
     if(!gameMechanics->getPlayer().getDNA().controlDNA())
+    {
         button->setText(QString(tr("Set Data (error!)")));
+        gameMechanics->getrPlayer()->setAP(0);
+    }
     else
     {
         for(QSpinBox *sb : sbVector)

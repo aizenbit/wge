@@ -1,4 +1,5 @@
 #include "gamemechanics.h"
+#include <algorithm>
 
 GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 {
@@ -21,9 +22,21 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     player = new Creature(map, mapSize);
     for (int i = 0; i < DNA::genTypeCount; i++)
         player->getrDNA()->setGenValue(0, i);
-    player->getrDNA()->setGenValue(200, DNA::dnaPoints);
 
-    for (int i = 0; i <= 5; i++)
+    player->getrDNA()->setGenValue(1000, DNA::dnaPoints);
+
+    //for debug
+
+    player->getrDNA()->setGenValue(100, DNA::defencePoints);
+    player->getrDNA()->setGenValue(100, DNA::defenceFire);
+    player->getrDNA()->setGenValue(100, DNA::defenceLong);
+    player->getrDNA()->setGenValue(200, DNA::damagePoints);
+    player->getrDNA()->setGenValue(200, DNA::damageFire);
+    player->getrDNA()->setGenValue(200, DNA::damageLong);
+    player->getrDNA()->setGenValue(9, DNA::actionpoints);
+    player->getrDNA()->setGenValue(400, DNA::HP);
+
+    for (int i = 0; i <= 25; i++)
         enemy.push_back(Creature(map, mapSize));
 
 
@@ -51,10 +64,10 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     strVector.append(tr("Ice"));    //Damage
     strVector.append(tr("Long"));   //Damage
     strVector.append(tr("Near"));   //Damage
-    strVector.append(tr("Action Points"));
     strVector.append(tr("DNA Points"));
     strVector.append(tr("Defence Points"));
     strVector.append(tr("Damage Points"));
+    strVector.append(tr("Action Points"));
 }
 
 //------------------------------------------------------------
@@ -445,7 +458,7 @@ void GameMechanics::showToolTip(QMouseEvent *event)
     int i = pos.x() / cellSize;
     int j = pos.y() / cellSize;
 
-    bool hereIsEnemy = false;
+    bool hereIsCreature = false;
 
     for(Creature &creature : enemy)
         if (creature.position.x() == i &&
@@ -455,15 +468,36 @@ void GameMechanics::showToolTip(QMouseEvent *event)
                     .arg(i).arg(j)
                     .arg(creature.getHP())
                     .arg(creature.getDNA().getGenValue(DNA::HP));
-            for (int i = DNA::defenceFire; i < DNA::genTypeCount; i++)
-                    text += strVector[i] + QString(": %1/%2\n")
-                    .arg(creature.getDNA().getGenValue(i))
-                    .arg(creature.getDNA().getGenMaxValue(i));
-            hereIsEnemy = true;
+            for (int i = DNA::defenceFire; i < DNA::genTypeCount - 1; i++)
+                text += strVector[i] + QString(": %1/%2\n")
+                        .arg(creature.getDNA().getGenValue(i))
+                        .arg(creature.getDNA().getGenMaxValue(i));
+            text += strVector[DNA::actionpoints] +
+                    QString(": %1/%2").arg(creature.getAP())
+                    .arg(creature.getDNA().getGenValue(DNA::actionpoints));
+            hereIsCreature = true;
             break;
         }
 
-    if (!hereIsEnemy)
+    if (player->position.x() == i &&
+        player->position.y() == j)
+    {
+        text = QString("(%1;%2)\nHP: %3/%4\n")
+                .arg(i).arg(j)
+                .arg(player->getHP())
+                .arg(player->getDNA().getGenValue(DNA::HP));
+        for (int i = DNA::defenceFire; i < DNA::genTypeCount -1 ; i++)
+            text += strVector[i] + QString(": %1/%2\n")
+                    .arg(player->getDNA().getGenValue(i))
+                    .arg(player->getDNA().getGenMaxValue(i));
+
+        text += strVector[DNA::actionpoints] +
+                QString(": %1/%2").arg(player->getAP())
+                .arg(player->getDNA().getGenValue(DNA::actionpoints));
+        hereIsCreature = true;
+    }
+
+    if (!hereIsCreature)
         text = QString(tr("(%1;%2)\n"
                       "CellType = %3")).arg(i).arg(j)
                                        .arg(int(map[i][j]));
@@ -601,11 +635,21 @@ void GameMechanics::storeDamage(int dmg)
 
 void GameMechanics::selection()
 {
-    for(Creature &creature :  enemy)
+    std::sort(enemy.begin(), enemy.end());
+
+    for(unsigned i = enemy.size() / 3; i < enemy.size(); i++)
     {
+        enemy[i].getrDNA()->setRandomDNA();
+    }
+
+    for(Creature &creature : enemy)
+    {
+        creature.position = QPoint(rand() % mapSize, rand() % mapSize);
         creature.resetDamageToPlayer();
         creature.liven();
     }
+
+    player->position = QPoint(rand() % mapSize, rand() % mapSize);
 
     emit newWave();
 

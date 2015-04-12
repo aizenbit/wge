@@ -22,10 +22,10 @@ public:
         damageLong,
         damageNear,
 
-        actionpoints,
         dnaPoints,      //= HP + defP + damP + ap * 10
         defencePoints,  //= (defF + defI) && (defL + defN)
         damagePoints,   //= (damF + damI) && (damL + damN)
+        actionpoints,
 
         genTypeCount
     };

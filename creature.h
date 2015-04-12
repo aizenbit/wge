@@ -24,6 +24,8 @@ private:
 
 
 public:
+    QPoint position;
+
     Creature(CellType::CellType **m, unsigned mS, QObject *parent = 0);
     Creature(const Creature&);
     ~Creature();
@@ -41,6 +43,7 @@ public:
     bool isDead() const;
     const DNA getDNA() const;
     DNA* getrDNA();
+    void setAP(int);
     int getAP() const;
     int getHP() const;
     int getDamageToPlayer() const;
@@ -49,8 +52,8 @@ public:
     void liven();
     void updateVariables();
     void restoreAP();
-
-    QPoint position;
+    bool operator <(const Creature &) const;
+    void operator =(const Creature &);
 
 signals:
     void paint(int delay);
