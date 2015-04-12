@@ -117,6 +117,13 @@ void Creature::liven()
 
 //------------------------------------------------------------
 
+void Creature::restoreAP()
+{
+    actionpoints = dna.getGenValue(DNA::actionpoints);
+}
+
+//------------------------------------------------------------
+
 bool Creature::move(Direction::Direction directionX, Direction::Direction directionY)
 {
     const int x = position.x();
@@ -260,6 +267,7 @@ void Creature::updateVariables()
 {
     HP = dna.getGenValue(DNA::HP);
     actionpoints = dna.getGenValue(DNA::actionpoints);
+    liven();
 }
 
 //------------------------------------------------------------

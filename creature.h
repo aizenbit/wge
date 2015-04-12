@@ -48,6 +48,7 @@ public:
     void storeDamage(int dmg);
     void liven();
     void updateVariables();
+    void restoreAP();
 
     QPoint position;
 

@@ -575,12 +575,15 @@ void GameMechanics::nextMove()
 {
     allEnemiesDead = true;
 
+    player->restoreAP();
+
     for(Creature &creature :  enemy)
         if (!creature.isDead())
         {
             enemyMove(creature);
             creature.storeDamage(currentDamage);
             allEnemiesDead = false;
+            creature.restoreAP();
         }
 
     if (allEnemiesDead || player->isDead())

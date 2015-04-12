@@ -25,7 +25,6 @@ UI::UI(QWidget *parent)
     distanceGroup->addButton(rbVector[2]);
     distanceGroup->addButton(rbVector[3]);
 
-
     elementGroup = new QButtonGroup();
     elementGroup->addButton(rbVector[0]);
     elementGroup->addButton(rbVector[1]);
@@ -161,6 +160,7 @@ void UI::sendSBData()
     }
 
     gameMechanics->getrPlayer()->updateVariables();
+    gameMechanics->repaint();
 
     if(!gameMechanics->getPlayer().getDNA().controlDNA())
         button->setText(QString(tr("Set Data (error!)")));
