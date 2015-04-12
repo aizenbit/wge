@@ -12,13 +12,14 @@ class UI : public QWidget
 private:
     GameMechanics *gameMechanics;
     QPushButton *button;
-    QMap <QString, QRadioButton*> rbMap;
-    QMap <QString, QLabel*> lblMap;
+    QVector <QRadioButton*> rbVector;
+    QVector <QLabel*> lblVector;
     QVector <QSpinBox*> sbVector;
-    QMap <QString, QHBoxLayout*> hblMap;
+    QVector <QHBoxLayout*> hblVector;
     QButtonGroup *distanceGroup, *elementGroup;
+    QGroupBox *defenceGB, *damageGB;
     QScrollArea *scrollArea;
-    QVBoxLayout *dataLayout;
+    QVBoxLayout *dataLayout, *damageLayout, *defenceLayout;
     QHBoxLayout *mainLayout;
 
     QVector <QString> strVector;

@@ -476,13 +476,14 @@ void GameMechanics::paintAttack(QPoint a, QPoint b, Damage::Type dT)
 
 void GameMechanics::attackEnemy(QMouseEvent *event)
 {
-    QPoint pos = event->pos();// / cellSize;
+    QPoint pos = event->pos();
     pos.rx() /= cellSize;
     pos.ry() /= cellSize;
+
     for (Creature &creature : enemy)
         if (pos == creature.getPosition())
         {
-            player->attack(&creature, Damage::Type(Damage::Long | Damage::Ice));
+            player->attack(&creature, playersDT);
             break;
         }
 }
@@ -491,7 +492,7 @@ void GameMechanics::attackEnemy(QMouseEvent *event)
 
 bool GameMechanics::setPlayersDT(Damage::Type dt)
 {
-    if (dt & (Damage::Long | Damage::Near))
+    if ((dt & Damage::Long) && (dt & Damage::Near))
         return false;
 
     playersDT = dt;

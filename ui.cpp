@@ -8,55 +8,45 @@ UI::UI(QWidget *parent)
     gameMechanics = new GameMechanics();
 
     strVector.append(tr("HP"));
-    strVector.append(tr("Defence"));
-    strVector.append(tr("Ice Defence"));
-    strVector.append(tr("Fire Defence"));
-    strVector.append(tr("Long Defence"));
-    strVector.append(tr("Near Defence"));
-    strVector.append(tr("Damage"));
-    strVector.append(tr("Ice Damage"));
-    strVector.append(tr("Fire Damage"));
-    strVector.append(tr("Long Damage"));
-    strVector.append(tr("Near Damage"));
+    strVector.append(tr("Fire"));   //Defence
+    strVector.append(tr("Ice"));    //Defence
+    strVector.append(tr("Long"));   //Defence
+    strVector.append(tr("Near"));   //Defence
+    strVector.append(tr("Fire"));   //Damage
+    strVector.append(tr("Ice"));    //Damage
+    strVector.append(tr("Long"));   //Damage
+    strVector.append(tr("Near"));   //Damage
     strVector.append(tr("Action Points"));
     strVector.append(tr("DNA Points"));
     strVector.append(tr("Defence Points"));
     strVector.append(tr("Damage Points"));
 
-    for(int i = 0; i < 15; i++)
-        hblMap.insert(strVector[i], new QHBoxLayout());
+    for(int i = 0; i < DNA::genTypeCount; i++)
+        hblVector.push_back(new QHBoxLayout());
 
-    for (int i = 0; i < 15; i++)
-        lblMap.insert(strVector[i], new QLabel(strVector[i] + ":"));
+    for (int i = 0; i < DNA::genTypeCount; i++)
+        lblVector.push_back(new QLabel(strVector[i] + ":"));
 
-    auto hbl = hblMap.begin();
-    auto lbl = lblMap.begin();
+    for (int i = 0; i < DNA::genTypeCount; i++)
+        hblVector[i]->addWidget(lblVector[i]);
 
-    for (int i = 0; i < lblMap.size(); i++)
-    {
-        hbl.value()->addWidget(lbl.value());
-        hbl++;
-        lbl++;
-    }
-
-    for (int i = 0; i < 4; i++)
-        rbMap.insert(strVector[7 + i], new QRadioButton());
+    for (int i = DNA::damageFire; i <= DNA::damageNear; i++)
+        rbVector.push_back(new QRadioButton());
 
     distanceGroup = new QButtonGroup();
-    distanceGroup->addButton(rbMap[strVector[7]]);
-    distanceGroup->addButton(rbMap[strVector[8]]);
+    distanceGroup->addButton(rbVector[2]);
+    distanceGroup->addButton(rbVector[3]);
 
 
     elementGroup = new QButtonGroup();
-    elementGroup->addButton(rbMap[strVector[9]]);
-    elementGroup->addButton(rbMap[strVector[10]]);
+    elementGroup->addButton(rbVector[0]);
+    elementGroup->addButton(rbVector[1]);
 
-    for (QRadioButton *rb : rbMap)
-        connect(rb, SIGNAL(clicked()), this, SLOT(sendRBData()));
+    for (QRadioButton *rb : rbVector)
+        connect(rb, SIGNAL(pressed()), this, SLOT(sendRBData()));
 
-
-    for (int i = 0; i < 4; i++)
-        hblMap[strVector[7 + i]]->insertWidget(0, rbMap[strVector[7 + i]]);
+    for (int i = DNA::damageFire; i <= DNA::damageNear; i++)
+        hblVector[i]->insertWidget(0, rbVector[i - DNA::damageFire]);
 
     for (int i = 0; i < DNA::genTypeCount; i++)
     {
@@ -64,18 +54,11 @@ UI::UI(QWidget *parent)
         sbVector[i]->setMaximum(gameMechanics->getPlayer().getDNA().getGenMaxValue(i));
     }
 
-    int j = 0;
-    for (int i = 0; i < 15; i++)
-    {
-        if(i == 1 || i == 6)            
-            continue;
-        hblMap[strVector[i]]->addWidget(sbVector[j]);
-        j++;
-    }
+    for (int i = 0; i < DNA::genTypeCount; i++)
+        hblVector[i]->addWidget(sbVector[i]);
 
     setsbMapSuffix(true);
     setSBData();
-
 
     for(QSpinBox * sb : sbVector)
         sb->setMinimum(0);
@@ -83,10 +66,26 @@ UI::UI(QWidget *parent)
     button = new QPushButton(tr("Set Data"));
     connect(button, SIGNAL(clicked()), this, SLOT(sendSBData()));
 
+    damageGB = new QGroupBox(tr("Damage"));
+    defenceGB = new QGroupBox(tr("Defence"));
+    damageLayout = new QVBoxLayout();
+    defenceLayout = new QVBoxLayout();
+
+    for (int i = DNA::damageFire; i <= DNA::damageNear; i++)
+        damageLayout->addLayout(hblVector[i]);
+    for (int i = DNA::defenceFire; i <= DNA::defenceNear; i++)
+        defenceLayout->addLayout(hblVector[i]);
+
+    damageGB->setLayout(damageLayout);
+    defenceGB->setLayout(defenceLayout);
+
     dataLayout = new QVBoxLayout();
 
-    for (int i = 0; i < 15; i++)
-        dataLayout->addLayout(hblMap[strVector[i]]);
+    dataLayout->addLayout(hblVector[DNA::HP]);
+    dataLayout->addWidget(defenceGB);
+    dataLayout->addWidget(damageGB);
+    for (int i = DNA::damageNear + 1; i < DNA::genTypeCount; i++)
+        dataLayout->addLayout(hblVector[i]);
     dataLayout->addWidget(button);
 
     mainLayout = new QHBoxLayout();
@@ -113,17 +112,20 @@ UI::~UI()
     delete distanceGroup;
     delete elementGroup;
 
-    for (QRadioButton *rb : rbMap)
+    for (QRadioButton *rb : rbVector)
         delete rb;
 
     for (QSpinBox *sb : sbVector)
         delete sb;
 
-    for (QLabel *lbl : lblMap)
+    for (QLabel *lbl : lblVector)
         delete lbl;
 
-    for (QHBoxLayout *hbl : hblMap)
+    for (QHBoxLayout *hbl : hblVector)
         delete hbl;
+
+    delete defenceGB;
+    delete damageGB;
 
     delete button;
 
@@ -180,15 +182,16 @@ void UI::sendSBData()
 
 void UI::sendRBData()
 {
-    Damage::Type dt;
+    Damage::Type dt = Damage::None;
 
-    if (rbMap[strVector[7]]->isChecked())
-        dt = Damage::Ice;
-    if (rbMap[strVector[8]]->isChecked())
+    if (rbVector[0]->isChecked())
         dt = Damage::Fire;
-    if (rbMap[strVector[9]]->isChecked())
+    if (rbVector[1]->isChecked())
+        dt = Damage::Ice;
+    if (rbVector[2]->isChecked())
         dt = Damage::Type(dt | Damage::Long);
-    if (rbMap[strVector[10]]->isChecked())
+    if (rbVector[3]->isChecked())
         dt = Damage::Type(dt | Damage::Near);
+
     gameMechanics->setPlayersDT(dt);
 }

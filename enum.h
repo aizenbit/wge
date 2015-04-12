@@ -24,6 +24,7 @@ enum CellType {
 
 namespace Damage{
 enum Type {
+    None = 0,
     Fire = 1,
     Ice  = 2,
     Long = 4,
