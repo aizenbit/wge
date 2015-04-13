@@ -149,8 +149,8 @@ DNA::Gen DNA::getGen(unsigned n) const
 
 void DNA::randomMutation(unsigned f, unsigned power)
 {
-    f %= genTypeCount;
-    f = genTypeCount - f;
+    if (f > genTypeCount)
+        f %= genTypeCount;
 
     for (Gen &gen: dna)
         if (rand() % f)
@@ -163,10 +163,10 @@ void DNA::randomMutation(unsigned f, unsigned power)
 
 //------------------------------------------------------------
 
-void DNA::crossingover(const DNA &newdna, unsigned n)
+void DNA::crossover(const DNA &newdna, unsigned n)
 {
-    for (n; n < genTypeCount; n++)
-        dna[n].value = newdna.getGenValue(n);
+    for (int i = n; i < genTypeCount; i++)
+        dna[i].value = newdna.getGenValue(i);
 }
 
 //------------------------------------------------------------
@@ -174,7 +174,5 @@ void DNA::crossingover(const DNA &newdna, unsigned n)
 void DNA::operator =(const DNA& newdna)
 {
     for (int i = 0; i <= genTypeCount; i++)
-    {
         dna[i] = newdna.getGen(i);
-    }
 }

@@ -11,8 +11,33 @@ class GameMechanics : public QWidget
 {
     Q_OBJECT
 
+public:
+    QVector <QString> strVector; //contains strings for ui (tips, labels etc.)
+
+public:
+    explicit GameMechanics(QWidget *parent = 0);
+    ~GameMechanics();
+
+    int getMapSize() const;
+    QSize getSizeForSA() const;
+    CellType::CellType getCell(int i, int j) const;
+    const Creature getPlayer() const;
+    Creature* getrPlayer();
+
+    void generateMap(unsigned int seed = 0);
+
+signals:
+    void newWave();
+    void playersMove(bool);
+
+public slots:
+    void paint(int del);
+    void paintAttack(QPoint a, QPoint b, Damage::Type dT);
+    bool setPlayersDT(Damage::Type dt);
+    void nextMove();
+
 private:
-    QColor cellColor[CellType::cellTypeCount] {
+    QColor cellColor[CellType::cellTypeCount] { //needed for painting
         QColor(0, 0, 0),
         QColor(152, 251, 152),
         QColor(253, 236, 143),
@@ -20,20 +45,21 @@ private:
         QColor(0, 206, 209),
         QColor(255, 140, 0)};
 
-    const int mapSize {65}; //must be (power of 2) + 1
-    int cellSize {10};
+    const int mapSize {65}; //must be (power of 2) + 1 cause of D-S algorithm
+    int cellSize {10};      //pixels per cell
     CellType::CellType ** map;
-    QPoint curCellPos;
+    QPoint curCellPos;      //celected cell
 
     std::vector<Creature> enemy;
     Creature *player;
 
-    //for paintAttack
+    //for paintAttack()
     QPoint attacker;
     QPoint defender;
     Damage::Type damageType;
     bool attack;
 
+    //for storeDamage()
     Damage::Type playersDT;
     int currentDamage;
     bool allEnemiesDead;
@@ -53,7 +79,7 @@ private:
     void paintAttack(QPainter &painter);
     void paintDead(QPainter &painter);
 
-    void delay(int msec);
+    void delay(int msec); //for animation
 
     //mouse and wheel events
     virtual void mousePressEvent(QMouseEvent *);
@@ -72,32 +98,6 @@ private:
 
 private slots:
     void storeDamage(int);
-
-public:
-    QVector <QString> strVector;
-
-    explicit GameMechanics(QWidget *parent = 0);
-    ~GameMechanics();
-
-    int getMapSize() const;
-    QSize getMinimumSize() const;
-    CellType::CellType getCell(int i, int j) const;
-    const Creature getPlayer() const;
-    Creature* getrPlayer();
-
-
-    void generateMap(unsigned int seed = 0);
-
-
-signals:
-    void newWave();
-    void playersMove(bool);
-
-public slots:
-    void paint(int del);
-    void paintAttack(QPoint a, QPoint b, Damage::Type dT);
-    bool setPlayersDT(Damage::Type dt);
-    void nextMove();
 };
 
 #endif // GAMEMECHANICS_H

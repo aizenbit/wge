@@ -11,15 +11,6 @@ enum CellType {
     busyByEnemy,
     cellTypeCount
 };
-/*char** cellTypeText = {
-    "empty",
-    "grass",
-    "sand",
-    "wall",
-    "busyByPlayer",
-    "busyByEnemy",
-    "cellTypeCount"
-};*/
 }
 
 namespace Damage{

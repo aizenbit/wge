@@ -82,13 +82,14 @@ UI::UI(QWidget *parent)
     scrollArea = new QScrollArea();
     scrollArea->setBackgroundRole(QPalette::Dark);
     scrollArea->setWidget(gameMechanics);
-    scrollArea->setMinimumSize(gameMechanics->getMinimumSize());
+    scrollArea->setMinimumSize(gameMechanics->getSizeForSA());
 
     mainLayout->addWidget(scrollArea);
     mainLayout->addSpacing(5);
     mainLayout->addLayout(dataLayout);
 
     this->setLayout(mainLayout);
+    this->setWindowTitle(tr("Worst Game Ever"));
 }
 
 //------------------------------------------------------------
@@ -164,14 +165,14 @@ void UI::sendSBData()
     gameMechanics->getrPlayer()->updateVariables();
     gameMechanics->repaint();
 
-    if(!gameMechanics->getPlayer().getDNA().controlDNA())
+    if (!gameMechanics->getPlayer().getDNA().controlDNA())
     {
         button->setText(QString(tr("Set Data (error!)")));
         gameMechanics->getrPlayer()->setAP(0);
     }
     else
     {
-        for(QSpinBox *sb : sbVector)
+        for (QSpinBox *sb : sbVector)
         {
             sb->setReadOnly(true);
             QPalette palette(sb->palette());
@@ -208,7 +209,7 @@ void UI::sendRBData()
 void UI::newWave()
 {
     button->setText(QString(tr("Set Data")));
-    for(QSpinBox *sb : sbVector)
+    for (QSpinBox *sb : sbVector)
         sb->setReadOnly(false);
     disconnect(button, SIGNAL(clicked()), gameMechanics, SLOT(nextMove()));
     connect(button, SIGNAL(clicked()), this, SLOT(sendSBData()));

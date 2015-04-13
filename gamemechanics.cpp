@@ -4,58 +4,6 @@
 
 GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 {
-    this->setMinimumSize(mapSize * cellSize, mapSize * cellSize);
-
-    map = new CellType::CellType*[mapSize];
-    for (int i = 0; i < mapSize; i++)
-        map[i] = new CellType::CellType[mapSize];
-
-    for (int i = 0; i < mapSize; i++)
-        for (int j = 0; j < mapSize; j++)
-            map[i][j] = CellType::empty;
-
-    generateMap(time(NULL));
-
-    curCellPos = QPoint(0,0);
-    attack = false;
-    allEnemiesDead = false;
-
-    player = new Creature(map, mapSize);
-    for (int i = 0; i < DNA::genTypeCount; i++)
-        player->getrDNA()->setGenValue(0, i);
-
-    player->getrDNA()->setGenValue(1000, DNA::dnaPoints);
-
-    //for debug
-
-    player->getrDNA()->setGenValue(100, DNA::defencePoints);
-    player->getrDNA()->setGenValue(99, DNA::defenceFire);
-    player->getrDNA()->setGenValue(99, DNA::defenceLong);
-    player->getrDNA()->setGenValue(200, DNA::damagePoints);
-    player->getrDNA()->setGenValue(200, DNA::damageFire);
-    player->getrDNA()->setGenValue(200, DNA::damageLong);
-    player->getrDNA()->setGenValue(9, DNA::actionpoints);
-    player->getrDNA()->setGenValue(100, DNA::HP);
-
-    for (int i = 0; i <= 5; i++)
-        enemy.push_back(Creature(map, mapSize));
-
-
-    for (Creature &creature : enemy)
-    {
-        connect(&creature, SIGNAL(paint(int)),
-                this, SLOT(paint(int)));
-        connect(&creature, SIGNAL(paintAttack(QPoint, QPoint, Damage::Type)),
-                this, SLOT(paintAttack(QPoint, QPoint, Damage::Type)));
-    }
-
-    connect(player, SIGNAL(paint(int)),
-            this, SLOT(paint(int)));
-    connect(player, SIGNAL(paintAttack(QPoint, QPoint, Damage::Type)),
-            this, SLOT(paintAttack(QPoint, QPoint, Damage::Type)));
-    connect(player, SIGNAL(damaged(int)),
-            this, SLOT(storeDamage(int)));
-
     strVector.append(tr("HP"));
     strVector.append(tr("Fire"));   //Defence
     strVector.append(tr("Ice"));    //Defence
@@ -69,6 +17,58 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     strVector.append(tr("Defence Points"));
     strVector.append(tr("Damage Points"));
     strVector.append(tr("Action Points"));
+
+    //initialize map
+    map = new CellType::CellType*[mapSize];
+    for (int i = 0; i < mapSize; i++)
+        map[i] = new CellType::CellType[mapSize];
+
+    for (int i = 0; i < mapSize; i++)
+        for (int j = 0; j < mapSize; j++)
+            map[i][j] = CellType::empty;
+
+    generateMap(time(NULL));
+
+    //initialize variables
+    curCellPos = QPoint(0,0);
+    attack = false;
+    allEnemiesDead = false;
+
+    //initialize enemies
+    for (int i = 0; i <= 5; i++)
+        enemy.push_back(Creature(map, mapSize));
+
+    for (Creature &creature : enemy)
+    {
+        connect(&creature, SIGNAL(paint(int)),
+                this, SLOT(paint(int)));
+        connect(&creature, SIGNAL(paintAttack(QPoint, QPoint, Damage::Type)),
+                this, SLOT(paintAttack(QPoint, QPoint, Damage::Type)));
+    }
+
+    //initialize player
+    player = new Creature(map, mapSize);
+    for (int i = 0; i < DNA::genTypeCount; i++)
+        player->getrDNA()->setGenValue(0, i);
+
+    player->getrDNA()->setGenValue(1000, DNA::dnaPoints);
+    player->getrDNA()->setGenValue(600, DNA::defencePoints);
+    player->getrDNA()->setGenValue(99, DNA::defenceFire);
+    player->getrDNA()->setGenValue(99, DNA::defenceLong);
+    player->getrDNA()->setGenValue(200, DNA::damagePoints);
+    player->getrDNA()->setGenValue(200, DNA::damageFire);
+    player->getrDNA()->setGenValue(200, DNA::damageLong);
+    player->getrDNA()->setGenValue(9, DNA::actionpoints);
+    player->getrDNA()->setGenValue(100, DNA::HP);
+
+    connect(player, SIGNAL(paint(int)),
+            this, SLOT(paint(int)));
+    connect(player, SIGNAL(paintAttack(QPoint, QPoint, Damage::Type)),
+            this, SLOT(paintAttack(QPoint, QPoint, Damage::Type)));
+    connect(player, SIGNAL(damaged(int)),
+            this, SLOT(storeDamage(int)));
+
+    this->setMinimumSize(mapSize * cellSize, mapSize * cellSize);
 }
 
 //------------------------------------------------------------
@@ -91,11 +91,11 @@ int GameMechanics::getMapSize() const
 
 //------------------------------------------------------------
 
-QSize GameMechanics::getMinimumSize() const
+QSize GameMechanics::getSizeForSA() const
 {
     QSize size = minimumSize();
-    size.rheight() += 2;
-    size.rwidth() += 2;
+    size.rheight() += 2; //cause QScrollArea has border,
+    size.rwidth() += 2;  //the thickness of which is 1 pixel
     return size;
 }
 
@@ -229,10 +229,10 @@ void GameMechanics::diamond(float ** floatMap, int n)
                               floatMap[x][yLower]) / 4.0f +
                               deviation;
 
-            if(floatMap[x][y] > 1)
+            if (floatMap[x][y] > 1)
                 floatMap[x][y] = 1;
             else
-            if(floatMap[x][y] < 0)
+            if (floatMap[x][y] < 0)
                 floatMap[x][y] = 0;
         }
 
@@ -260,24 +260,24 @@ void GameMechanics::square(float ** floatMap, int n)
                                          floatMap[x + side][y + side]) / 4.0f +
                                          deviation;
 
-            if(floatMap[xCenter][yCenter] > 1)
+            if (floatMap[xCenter][yCenter] > 1)
                 floatMap[xCenter][yCenter] = 1;
             else
-            if(floatMap[xCenter][yCenter] < 0)
+            if (floatMap[xCenter][yCenter] < 0)
                 floatMap[xCenter][yCenter] = 0;
         }
 }
 
 //------------------------------------------------------------
 
-void GameMechanics::paintEvent(QPaintEvent *)
+void GameMechanics::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.begin(this);
 
     paintMap(painter);
     paintEnemy(painter);
-    //paintWay(painter, *player);
+    //paintWay(painter, *player); //for debug
     paintPlayer(painter);
     paintCelectedCell(painter);
     paintDead(painter);
@@ -285,6 +285,8 @@ void GameMechanics::paintEvent(QPaintEvent *)
         paintAttack(painter);
 
     painter.end();
+
+    event->accept();
 }
 
 //------------------------------------------------------------
@@ -299,6 +301,7 @@ void GameMechanics::paintMap(QPainter &painter)
                 painter.drawRect(i * cellSize, j * cellSize,
                                  cellSize, cellSize);
         }
+
     this->setMinimumSize(cellSize * mapSize, cellSize * mapSize);
 }
 
@@ -380,13 +383,13 @@ void GameMechanics::paintDead(QPainter &painter)
     painter.setPen(Qt::black);
     painter.setBrush(Qt::DiagCrossPattern);
 
-    for(Creature &creature : enemy)
-        if(creature.isDead())
+    for (Creature &creature : enemy)
+        if (creature.isDead())
             painter.drawRect(creature.getPosition().x() * cellSize,
                              creature.getPosition().y() * cellSize,
                              cellSize,
                              cellSize);
-    if(player->isDead())
+    if (player->isDead())
         painter.drawRect(player->getPosition().x() * cellSize,
                          player->getPosition().y() * cellSize,
                          cellSize,
@@ -405,9 +408,9 @@ void GameMechanics::paint(int del)
 
 void GameMechanics::delay(int msec)
 {
-    /*QTime dieTime = QTime::currentTime().addMSecs(msec);
-    while( QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);*/
+    QTime dieTime = QTime::currentTime().addMSecs(msec);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
 //------------------------------------------------------------
@@ -461,7 +464,8 @@ void GameMechanics::showToolTip(QMouseEvent *event)
 
     bool hereIsCreature = false;
 
-    for(Creature &creature : enemy)
+    //prepare text for enemy
+    for (Creature &creature : enemy)
         if (creature.position.x() == i &&
             creature.position.y() == j)
         {
@@ -469,10 +473,12 @@ void GameMechanics::showToolTip(QMouseEvent *event)
                     .arg(i).arg(j)
                     .arg(creature.getHP())
                     .arg(creature.getDNA().getGenValue(DNA::HP));
+
             for (int i = DNA::defenceFire; i < DNA::genTypeCount - 1; i++)
                 text += strVector[i] + QString(": %1/%2\n")
                         .arg(creature.getDNA().getGenValue(i))
                         .arg(creature.getDNA().getGenMaxValue(i));
+
             text += strVector[DNA::actionpoints] +
                     QString(": %1/%2").arg(creature.getAP())
                     .arg(creature.getDNA().getGenValue(DNA::actionpoints));
@@ -480,6 +486,7 @@ void GameMechanics::showToolTip(QMouseEvent *event)
             break;
         }
 
+    //prepare text for player
     if (player->position.x() == i &&
         player->position.y() == j)
     {
@@ -487,6 +494,7 @@ void GameMechanics::showToolTip(QMouseEvent *event)
                 .arg(i).arg(j)
                 .arg(player->getHP())
                 .arg(player->getDNA().getGenValue(DNA::HP));
+
         for (int i = DNA::defenceFire; i < DNA::genTypeCount -1 ; i++)
             text += strVector[i] + QString(": %1/%2\n")
                     .arg(player->getDNA().getGenValue(i))
@@ -498,6 +506,7 @@ void GameMechanics::showToolTip(QMouseEvent *event)
         hereIsCreature = true;
     }
 
+    //prepare text for cell
     if (!hereIsCreature)
         text = QString(tr("(%1;%2)\n"
                       "CellType = %3")).arg(i).arg(j)
@@ -539,6 +548,7 @@ void GameMechanics::paintAttack(QPoint a, QPoint b, Damage::Type dT)
     defender += corrector;
     damageType = dT;
     attack = true;
+
     repaint();
     delay(100);
     repaint();
@@ -645,19 +655,18 @@ void GameMechanics::selection()
 
     generateMap(time(NULL));
 
-    writeLog();
-
+    //writeLog(); //for debug
 
     for (unsigned i = enemy.size() / 2; i < enemy.size(); i++)
     {
         if (rand() % 2)
-            enemy[i].getrDNA()->crossingover(enemy[i - enemy.size() / 2].getDNA(),
+            enemy[i].getrDNA()->crossover(enemy[i - enemy.size() / 2].getDNA(),
                                              rand() % DNA::genTypeCount);
         else
         {
             Creature tempCreature = enemy[i];
             enemy[i] = enemy[i - enemy.size() / 2];
-            enemy[i].getrDNA()->crossingover(tempCreature.getDNA(),
+            enemy[i].getrDNA()->crossover(tempCreature.getDNA(),
                                              rand() % DNA::genTypeCount);
         }
 
@@ -683,21 +692,39 @@ void GameMechanics::selection()
 
 void GameMechanics::optimizeEnemy(Creature &creature)
 {
+    //correct creatures damage
     int damageP = creature.getDNA().getGenValue(DNA::damagePoints);
 
     float defF = float(player->getDNA().getGenValue(DNA::defenceFire)) /
                  float(player->getDNA().getGenValue(DNA::defencePoints));
     creature.getrDNA()->setGenValue(damageP * defF,
                                     DNA::damageIce);
-    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - defF,
+    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - damageP * defF,
                                     DNA::damageFire);
 
 
     float defL = float(player->getDNA().getGenValue(DNA::defenceLong)) /
                  float(player->getDNA().getGenValue(DNA::defencePoints));
+
     creature.getrDNA()->setGenValue(damageP * defL, DNA::damageNear);
-    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - defF,
+    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - damageP * defL,
                                     DNA::damageLong);
+
+    //correct creatures defence
+    int defenceP = creature.getDNA().getGenValue(DNA::defencePoints);
+
+    float damF = float(player->getDNA().getGenValue(DNA::damageFire)) /
+                 float(player->getDNA().getGenValue(DNA::damagePoints));
+    creature.getrDNA()->setGenValue(defenceP * damF,
+                                    DNA::defenceIce);
+    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::defencePoints) - defenceP * damF,
+                                    DNA::defenceFire);
+
+    float damL = float(player->getDNA().getGenValue(DNA::damageLong)) /
+                 float(player->getDNA().getGenValue(DNA::damagePoints));
+    creature.getrDNA()->setGenValue(defenceP * damL, DNA::defenceNear);
+    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - defenceP * damL,
+                                    DNA::defenceLong);
 
 }
 
@@ -705,7 +732,7 @@ void GameMechanics::optimizeEnemy(Creature &creature)
 
 void GameMechanics::writeLog()
 {
-    QFile file("enemydatac.txt");
+    QFile file("enemydata.txt");
     QTextStream stream(&file);
     file.open(QIODevice::Append);
 

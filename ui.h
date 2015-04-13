@@ -9,6 +9,10 @@ class UI : public QWidget
 {
     Q_OBJECT
 
+public:
+    UI(QWidget *parent = 0);
+    ~UI();
+
 private:
     GameMechanics *gameMechanics;
     QPushButton *button;
@@ -28,11 +32,6 @@ private slots:
     void sendSBData();
     void sendRBData();
     void newWave();
-
-public:
-    UI(QWidget *parent = 0);
-    ~UI();
-
 };
 
 #endif // UI_H

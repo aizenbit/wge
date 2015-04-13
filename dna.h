@@ -12,12 +12,12 @@ public:
     enum GenType {
         HP,
 
-        defenceFire,
+        defenceFire,    //defence percentage
         defenceIce,
         defenceLong,
         defenceNear,
 
-        damageFire,
+        damageFire,     //damage points
         damageIce,
         damageLong,
         damageNear,
@@ -35,11 +35,6 @@ public:
         unsigned int maxValue;
     };
 
-private:
-    std::vector<Gen> dna;
-
-    void correctGenValue(GenType type);
-
 public:
     DNA(QObject *parent = 0);
     DNA(const DNA &);
@@ -47,17 +42,19 @@ public:
     unsigned getGenValue(unsigned n) const;
     unsigned getGenMaxValue(unsigned n) const;
     Gen getGen(unsigned n) const;
-    void randomMutation(unsigned f, unsigned power = 50);
-    void setRandomDNA();
     bool setGenValue(unsigned value, unsigned n);
+    void setRandomDNA();
+    void randomMutation(unsigned f, unsigned power = 50);
+    void crossover(const DNA &newdna, unsigned n = DNA::genTypeCount / 2);
+
     bool controlDNA() const;
-    void crossingover(const DNA &newdna, unsigned n = DNA::genTypeCount / 2);
 
     void operator=(const DNA&);
 
-signals:
+private:
+    std::vector<Gen> dna;
 
-public slots:
+    void correctGenValue(GenType type);
 };
 
 #endif // DNA_H

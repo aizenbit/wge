@@ -125,7 +125,7 @@ void Creature::liven()
 void Creature::restoreAP()
 {
     actionpoints = dna.getGenValue(DNA::actionpoints);
-    if(actionpoints <= 1)
+    if (actionpoints <= 1)
         actionpoints = 2;
 }
 
@@ -168,7 +168,7 @@ bool Creature::moveTo(int x, int y)
         emit paint(50);
     }
 
-    if(way.size() > actionpoints)
+    if (way.size() > actionpoints)
         return false;
 
     return true;
@@ -178,7 +178,7 @@ bool Creature::moveTo(int x, int y)
 
 bool Creature::attack(Creature *creature, Damage::Type damageType)
 {
-    if(actionpoints <= 0)
+    if (actionpoints <= 0)
         return false;
 
     const QPoint enemyPos = creature->getPosition();
@@ -195,10 +195,10 @@ bool Creature::attack(Creature *creature, Damage::Type damageType)
 
         int dmg = dna.getGenValue(DNA::damageNear) * logf(nearDamageDistance - distance);
 
-        if(damageType & Damage::Fire)
+        if (damageType & Damage::Fire)
             dmg += dna.getGenValue(DNA::damageFire);
 
-        if(damageType & Damage::Ice)
+        if (damageType & Damage::Ice)
             dmg += dna.getGenValue(DNA::damageIce);
 
         creature->acceptDamage(dmg, damageType);
@@ -212,12 +212,12 @@ bool Creature::attack(Creature *creature, Damage::Type damageType)
         if (distance >= longDamageDistance)
             return false;
 
-        int dmg = dna.getGenValue(DNA::damageLong);// * logf(abs(distance - longDamageDistance));
+        int dmg = dna.getGenValue(DNA::damageLong);
 
-        if(damageType & Damage::Fire)
+        if (damageType & Damage::Fire)
             dmg += dna.getGenValue(DNA::damageFire);
 
-        if(damageType & Damage::Ice)
+        if (damageType & Damage::Ice)
             dmg += dna.getGenValue(DNA::damageIce);
 
         creature->acceptDamage(dmg, damageType);
@@ -236,8 +236,8 @@ void Creature::acceptDamage(int dmg, Damage::Type damageType)
     if (dmg <= 0)
         return;
 
-    if((damageType & Damage::Long) &&
-       (damageType & Damage::Near))
+    if ((damageType & Damage::Long) &&
+        (damageType & Damage::Near))
         return;
 
     if (damageType & Damage::Fire)
@@ -254,7 +254,7 @@ void Creature::acceptDamage(int dmg, Damage::Type damageType)
 
     HP -= dmg;
 
-    if(dmg > 0)
+    if (dmg > 0)
         emit damaged(dmg);
 
     if (HP <= 0)
@@ -341,7 +341,7 @@ bool Creature::findWayTo(int x, int y)
     way.clear();
     way.push_back(QPoint(x, y));
 
-    while(step > 0)
+    while (step > 0)
     {
         int tx = way.back().x();
         int ty = way.back().y();
@@ -353,7 +353,7 @@ bool Creature::findWayTo(int x, int y)
         int yDirection = myY - ty;
         calculateDirection(QPoint(way.back()), position, xDirection, yDirection);
 
-        if(abs(xDirection) > abs(yDirection))
+        if (abs(xDirection) > abs(yDirection))
         {
             yDirection = 0;
             xDirection /= abs(xDirection);
@@ -410,8 +410,8 @@ bool Creature::findWayTo(int x, int y)
         delete[] labelMap[i];
     delete [] labelMap;
 
-    for(QPoint p :way)
-        if(p.x() < 0 || p.x() > mapSize ||
+    for (QPoint p :way)
+        if (p.x() < 0 || p.x() > mapSize ||
            p.y() < 0 || p.y() > mapSize)
         {
             way.clear();
@@ -430,7 +430,7 @@ void Creature::calculateDirection(QPoint myPos, QPoint targetPos,
     int xDirection = targetPos.x() - myPos.x();
     int yDirection = targetPos.y() - myPos.y();
 
-    if(abs(xDirection) > abs(yDirection))
+    if (abs(xDirection) > abs(yDirection))
     {
         yDirection = 0;
         xDirection /= abs(xDirection);
