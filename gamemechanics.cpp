@@ -1,5 +1,6 @@
 #include "gamemechanics.h"
 #include <algorithm>
+#include <ctime>
 
 GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 {
@@ -13,7 +14,7 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
         for (int j = 0; j < mapSize; j++)
             map[i][j] = CellType::empty;
 
-    generateMap();
+    generateMap(time(NULL));
 
     curCellPos = QPoint(0,0);
     attack = false;
@@ -642,9 +643,10 @@ void GameMechanics::selection()
 {
     std::sort(enemy.begin(), enemy.end());
 
-    generateMap(enemy[0].getDamageToPlayer());
+    generateMap(time(NULL));
 
     writeLog();
+
 
     for (unsigned i = enemy.size() / 2; i < enemy.size(); i++)
     {
@@ -661,12 +663,14 @@ void GameMechanics::selection()
 
         enemy[i].getrDNA()->randomMutation(DNA::genTypeCount);
         optimizeEnemy(enemy[i]);
+
     }
 
     for (Creature &creature : enemy)
     {
         creature.position = QPoint(rand() % mapSize, rand() % mapSize);
         creature.resetDamageToPlayer();
+        creature.restoreAP();
         creature.liven();
     }
 
@@ -681,17 +685,20 @@ void GameMechanics::optimizeEnemy(Creature &creature)
 {
     int damageP = creature.getDNA().getGenValue(DNA::damagePoints);
 
-    int defF = player->getDNA().getGenValue(DNA::defenceFire) /
-                player->getDNA().getGenValue(DNA::defencePoints);
-    creature.getrDNA()->setGenValue(damageP * defF, DNA::damageFire);
-    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - defF,
+    float defF = float(player->getDNA().getGenValue(DNA::defenceFire)) /
+                 float(player->getDNA().getGenValue(DNA::defencePoints));
+    creature.getrDNA()->setGenValue(damageP * defF,
                                     DNA::damageIce);
-
-    int defL = player->getDNA().getGenValue(DNA::defenceLong) /
-                player->getDNA().getGenValue(DNA::defencePoints);
-    creature.getrDNA()->setGenValue(damageP * defL, DNA::damageLong);
     creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - defF,
-                                    DNA::damageNear);
+                                    DNA::damageFire);
+
+
+    float defL = float(player->getDNA().getGenValue(DNA::defenceLong)) /
+                 float(player->getDNA().getGenValue(DNA::defencePoints));
+    creature.getrDNA()->setGenValue(damageP * defL, DNA::damageNear);
+    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - defF,
+                                    DNA::damageLong);
+
 }
 
 //------------------------------------------------------------

@@ -125,6 +125,8 @@ void Creature::liven()
 void Creature::restoreAP()
 {
     actionpoints = dna.getGenValue(DNA::actionpoints);
+    if(actionpoints <= 1)
+        actionpoints = 2;
 }
 
 //------------------------------------------------------------
