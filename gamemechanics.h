@@ -67,6 +67,8 @@ private:
     //
     void enemyMove(Creature &creature);
     void selection();
+    void writeLog();
+    void optimizeEnemy(Creature &creature);
 
 private slots:
     void storeDamage(int);

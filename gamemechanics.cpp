@@ -28,15 +28,15 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     //for debug
 
     player->getrDNA()->setGenValue(100, DNA::defencePoints);
-    player->getrDNA()->setGenValue(100, DNA::defenceFire);
-    player->getrDNA()->setGenValue(100, DNA::defenceLong);
+    player->getrDNA()->setGenValue(99, DNA::defenceFire);
+    player->getrDNA()->setGenValue(99, DNA::defenceLong);
     player->getrDNA()->setGenValue(200, DNA::damagePoints);
     player->getrDNA()->setGenValue(200, DNA::damageFire);
     player->getrDNA()->setGenValue(200, DNA::damageLong);
     player->getrDNA()->setGenValue(9, DNA::actionpoints);
-    player->getrDNA()->setGenValue(400, DNA::HP);
+    player->getrDNA()->setGenValue(100, DNA::HP);
 
-    for (int i = 0; i <= 25; i++)
+    for (int i = 0; i <= 5; i++)
         enemy.push_back(Creature(map, mapSize));
 
 
@@ -644,7 +644,61 @@ void GameMechanics::selection()
 
     generateMap(enemy[0].getDamageToPlayer());
 
-    QFile file("enemydata.txt");
+    writeLog();
+
+    for (unsigned i = enemy.size() / 2; i < enemy.size(); i++)
+    {
+        if (rand() % 2)
+            enemy[i].getrDNA()->crossingover(enemy[i - enemy.size() / 2].getDNA(),
+                                             rand() % DNA::genTypeCount);
+        else
+        {
+            Creature tempCreature = enemy[i];
+            enemy[i] = enemy[i - enemy.size() / 2];
+            enemy[i].getrDNA()->crossingover(tempCreature.getDNA(),
+                                             rand() % DNA::genTypeCount);
+        }
+
+        enemy[i].getrDNA()->randomMutation(DNA::genTypeCount);
+        optimizeEnemy(enemy[i]);
+    }
+
+    for (Creature &creature : enemy)
+    {
+        creature.position = QPoint(rand() % mapSize, rand() % mapSize);
+        creature.resetDamageToPlayer();
+        creature.liven();
+    }
+
+    player->position = QPoint(rand() % mapSize, rand() % mapSize);
+
+    emit newWave();
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::optimizeEnemy(Creature &creature)
+{
+    int damageP = creature.getDNA().getGenValue(DNA::damagePoints);
+
+    int defF = player->getDNA().getGenValue(DNA::defenceFire) /
+                player->getDNA().getGenValue(DNA::defencePoints);
+    creature.getrDNA()->setGenValue(damageP * defF, DNA::damageFire);
+    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - defF,
+                                    DNA::damageIce);
+
+    int defL = player->getDNA().getGenValue(DNA::defenceLong) /
+                player->getDNA().getGenValue(DNA::defencePoints);
+    creature.getrDNA()->setGenValue(damageP * defL, DNA::damageLong);
+    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - defF,
+                                    DNA::damageNear);
+}
+
+//------------------------------------------------------------
+
+void GameMechanics::writeLog()
+{
+    QFile file("enemydatac.txt");
     QTextStream stream(&file);
     file.open(QIODevice::Append);
 
@@ -659,22 +713,5 @@ void GameMechanics::selection()
                      .arg(enemy[i].getDamageToPlayer());
     stream << tr("\r\n");
 
-    for(unsigned i = enemy.size() / 2; i < enemy.size(); i++)
-    {
-        enemy[i] = enemy[i - enemy.size() / 2];
-        enemy[i].getrDNA()->randomMutation(DNA::genTypeCount);
-    }
-
     file.close();
-
-    for(Creature &creature : enemy)
-    {
-        creature.position = QPoint(rand() % mapSize, rand() % mapSize);
-        creature.resetDamageToPlayer();
-        creature.liven();
-    }
-
-    player->position = QPoint(rand() % mapSize, rand() % mapSize);
-
-    emit newWave();
 }

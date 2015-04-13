@@ -51,6 +51,7 @@ public:
     void setRandomDNA();
     bool setGenValue(unsigned value, unsigned n);
     bool controlDNA() const;
+    void crossingover(const DNA &newdna, unsigned n = DNA::genTypeCount / 2);
 
     void operator=(const DNA&);
 
