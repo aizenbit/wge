@@ -44,7 +44,8 @@ DNA::~DNA()
 
 void DNA::setRandomDNA()
 {
-    dna[dnaPoints].value = 100 + rand() % (dna[dnaPoints].maxValue - 100);
+    //dna[dnaPoints].value = 100 + rand() % (dna[dnaPoints].maxValue - 100);
+    dna[dnaPoints].value = 1000;
 
     dna[HP].value = rand() % dna[dnaPoints].value;
     correctGenValue(HP);
@@ -129,7 +130,12 @@ unsigned DNA::getGenMaxValue(unsigned n) const
 
 bool DNA::setGenValue(unsigned value, unsigned n)
 {
-    //unsigned genValue = dna[n].value;
+    if (value > dna[n].maxValue)
+    {
+        value = 0;
+        return false;
+    }
+
     dna[n].value = value;
 
     if (controlDNA())
@@ -151,11 +157,15 @@ void DNA::randomMutation(unsigned f, unsigned power)
 {
     if (f > genTypeCount)
         f %= genTypeCount;
+    if (power == 0)
+        return;
 
     for (Gen &gen: dna)
         if (rand() % f)
         {
             unsigned p = float(gen.maxValue) / power * 100;
+            if (p == 0)
+                return;
             gen.value += rand() % p;
             gen.value %= gen.maxValue;
         }

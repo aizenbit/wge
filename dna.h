@@ -44,7 +44,7 @@ public:
     Gen getGen(unsigned n) const;
     bool setGenValue(unsigned value, unsigned n);
     void setRandomDNA();
-    void randomMutation(unsigned f, unsigned power = 50);
+    void randomMutation(unsigned f, unsigned power = 10);
     void crossover(const DNA &newdna, unsigned n = DNA::genTypeCount / 2);
 
     bool controlDNA() const;

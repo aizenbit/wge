@@ -7,6 +7,8 @@ UI::UI(QWidget *parent)
 {
     gameMechanics = new GameMechanics();
 
+    gameMechanics->getrPlayer()->setAP(0);
+
     connect(gameMechanics, SIGNAL(newWave()), this, SLOT(newWave()));
 
     for(int i = 0; i < DNA::genTypeCount; i++)

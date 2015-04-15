@@ -52,7 +52,7 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
         player->getrDNA()->setGenValue(0, i);
 
     player->getrDNA()->setGenValue(1000, DNA::dnaPoints);
-    player->getrDNA()->setGenValue(600, DNA::defencePoints);
+    player->getrDNA()->setGenValue(100, DNA::defencePoints);
     player->getrDNA()->setGenValue(99, DNA::defenceFire);
     player->getrDNA()->setGenValue(99, DNA::defenceLong);
     player->getrDNA()->setGenValue(200, DNA::damagePoints);
@@ -408,9 +408,9 @@ void GameMechanics::paint(int del)
 
 void GameMechanics::delay(int msec)
 {
-    QTime dieTime = QTime::currentTime().addMSecs(msec);
+    /*QTime dieTime = QTime::currentTime().addMSecs(msec);
     while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);*/
 }
 
 //------------------------------------------------------------
@@ -461,6 +461,10 @@ void GameMechanics::showToolTip(QMouseEvent *event)
 
     int i = pos.x() / cellSize;
     int j = pos.y() / cellSize;
+
+    if(i < 0 || i > mapSize ||
+       j < 0 || j > mapSize)
+        return;
 
     bool hereIsCreature = false;
 
@@ -670,7 +674,8 @@ void GameMechanics::selection()
                                              rand() % DNA::genTypeCount);
         }
 
-        enemy[i].getrDNA()->randomMutation(DNA::genTypeCount);
+        enemy[i].getrDNA()->randomMutation(DNA::genTypeCount, rand() % 20);
+        enemy[i].getrDNA()->setGenValue(1000, DNA::dnaPoints);
         optimizeEnemy(enemy[i]);
 
     }
@@ -692,6 +697,26 @@ void GameMechanics::selection()
 
 void GameMechanics::optimizeEnemy(Creature &creature)
 {
+    //correct points
+    int cntr = 0;
+    while ((creature.getDNA().getGenValue(DNA::HP) +
+           creature.getDNA().getGenValue(DNA::defencePoints) +
+           creature.getDNA().getGenValue(DNA::damagePoints) +
+           creature.getDNA().getGenValue(DNA::actionpoints) * 10) >
+           creature.getDNA().getGenValue(DNA::dnaPoints))
+    {
+        cntr++;
+        creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::HP) - 1, DNA::HP);
+        creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::defencePoints) - 1, DNA::defencePoints);
+        creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - 1, DNA::damagePoints);
+
+        if (cntr >= 10 + rand() % 50)
+        {
+            cntr = 0;
+            creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::actionpoints) - 1, DNA::actionpoints);
+        }
+    }
+
     //correct creatures damage
     int damageP = creature.getDNA().getGenValue(DNA::damagePoints);
 
@@ -716,15 +741,15 @@ void GameMechanics::optimizeEnemy(Creature &creature)
     float damF = float(player->getDNA().getGenValue(DNA::damageFire)) /
                  float(player->getDNA().getGenValue(DNA::damagePoints));
     creature.getrDNA()->setGenValue(defenceP * damF,
-                                    DNA::defenceIce);
-    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::defencePoints) - defenceP * damF,
                                     DNA::defenceFire);
+    creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::defencePoints) - defenceP * damF,
+                                    DNA::defenceIce);
 
     float damL = float(player->getDNA().getGenValue(DNA::damageLong)) /
                  float(player->getDNA().getGenValue(DNA::damagePoints));
-    creature.getrDNA()->setGenValue(defenceP * damL, DNA::defenceNear);
+    creature.getrDNA()->setGenValue(defenceP * damL, DNA::defenceLong);
     creature.getrDNA()->setGenValue(creature.getDNA().getGenValue(DNA::damagePoints) - defenceP * damL,
-                                    DNA::defenceLong);
+                                    DNA::defenceNear);
 
 }
 
