@@ -19,9 +19,9 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     strVector.append(tr("Action Points"));
 
     //initialize map
-    map = new CellType::CellType*[mapSize];
+    map = new CellType*[mapSize];
     for (int i = 0; i < mapSize; i++)
-        map[i] = new CellType::CellType[mapSize];
+        map[i] = new CellType[mapSize];
 
     for (int i = 0; i < mapSize; i++)
         for (int j = 0; j < mapSize; j++)
@@ -42,8 +42,8 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
     {
         connect(&creature, SIGNAL(paint(int)),
                 this, SLOT(paint(int)));
-        connect(&creature, SIGNAL(paintAttack(QPoint, QPoint, Damage::Type)),
-                this, SLOT(paintAttack(QPoint, QPoint, Damage::Type)));
+        connect(&creature, SIGNAL(paintAttack(QPoint, QPoint, DamageType)),
+                this, SLOT(paintAttack(QPoint, QPoint, DamageType)));
     }
 
     //initialize player
@@ -63,8 +63,8 @@ GameMechanics::GameMechanics(QWidget *parent) : QWidget(parent)
 
     connect(player, SIGNAL(paint(int)),
             this, SLOT(paint(int)));
-    connect(player, SIGNAL(paintAttack(QPoint, QPoint, Damage::Type)),
-            this, SLOT(paintAttack(QPoint, QPoint, Damage::Type)));
+    connect(player, SIGNAL(paintAttack(QPoint, QPoint, DamageType)),
+            this, SLOT(paintAttack(QPoint, QPoint, DamageType)));
     connect(player, SIGNAL(damaged(int)),
             this, SLOT(storeDamage(int)));
 
@@ -101,7 +101,7 @@ QSize GameMechanics::getSizeForSA() const
 
 //------------------------------------------------------------
 
-CellType::CellType GameMechanics::getCell(int i, int j) const
+CellType GameMechanics::getCell(int i, int j) const
 {
     return map[i][j];
 }
@@ -143,13 +143,13 @@ void GameMechanics::generateMap(unsigned int seed)
     for (int i = 0; i < mapSize; i++)
         for (int j = 0; j < mapSize; j++)
         {
-            CellType::CellType newCell = CellType::CellType(floatMap[i][j] * (3) + 1);
+            CellType newCell = CellType(floatMap[i][j] * (3) + 1);
 
             if(newCell == CellType::empty)
-                newCell = CellType::CellType(CellType::empty + 1);
+                newCell = CellType(CellType::empty + 1);
 
             if(newCell >= CellType::busyByPlayer)
-                newCell = CellType::CellType(CellType::busyByPlayer - 1);
+                newCell = CellType(CellType::busyByPlayer - 1);
 
             map[i][j] = newCell;
         }
@@ -296,8 +296,8 @@ void GameMechanics::paintMap(QPainter &painter)
     for (int i = 0; i < mapSize; i++) //paint cells according to cell types
         for (int j = 0; j < mapSize; j++)
         {
-                painter.setBrush(cellColor[getCell(i, j)]);
-                painter.setPen(cellColor[getCell(i, j)]);
+                painter.setBrush(cellColor[int(getCell(i, j))]);
+                painter.setPen(cellColor[int(getCell(i, j))]);
                 painter.drawRect(i * cellSize, j * cellSize,
                                  cellSize, cellSize);
         }
@@ -309,8 +309,8 @@ void GameMechanics::paintMap(QPainter &painter)
 
 void GameMechanics::paintPlayer(QPainter &painter)
 {
-    painter.setBrush(cellColor[CellType::busyByPlayer]);
-    painter.setPen(cellColor[CellType::busyByPlayer]);
+    painter.setBrush(cellColor[int(CellType::busyByPlayer)]);
+    painter.setPen(cellColor[int(CellType::busyByPlayer)]);
 
     painter.drawRect(player->getPosition().x() * cellSize,
                      player->getPosition().y() * cellSize,
@@ -322,8 +322,8 @@ void GameMechanics::paintPlayer(QPainter &painter)
 
 void GameMechanics::paintEnemy(QPainter &painter)
 {
-    painter.setBrush(cellColor[CellType::busyByEnemy]);
-    painter.setPen(cellColor[CellType::busyByEnemy]);
+    painter.setBrush(cellColor[int(CellType::busyByEnemy)]);
+    painter.setPen(cellColor[int(CellType::busyByEnemy)]);
 
     for (Creature creature : enemy)
     {
@@ -366,9 +366,9 @@ void GameMechanics::paintAttack(QPainter &painter)
 {
     painter.setPen(Qt::gray);
 
-    if (damageType & Damage::Fire)
+    if (bool(damageType & DamageType::Fire))
         painter.setPen(Qt::red);
-    if (damageType & Damage::Ice)
+    if (bool(damageType & DamageType::Ice))
         painter.setPen(Qt::blue);
 
     painter.drawLine(attacker, defender);
@@ -543,7 +543,7 @@ void GameMechanics::movePlayer(QMouseEvent *event)
 
 //------------------------------------------------------------
 
-void GameMechanics::paintAttack(QPoint a, QPoint b, Damage::Type dT)
+void GameMechanics::paintAttack(QPoint a, QPoint b, DamageType dT)
 {
     QPoint corrector(cellSize/2, cellSize/2);
     attacker = a * cellSize;
@@ -576,9 +576,9 @@ void GameMechanics::attackEnemy(QMouseEvent *event)
 
 //------------------------------------------------------------
 
-bool GameMechanics::setPlayersDT(Damage::Type dt)
+bool GameMechanics::setPlayersDT(DamageType dt)
 {
-    if ((dt & Damage::Long) && (dt & Damage::Near))
+    if (bool(dt & DamageType::Long) && bool(dt & DamageType::Near))
         return false;
 
     playersDT = dt;
@@ -600,9 +600,9 @@ void GameMechanics::enemyMove(Creature &creature)
         while(creature.getAP() > 0)
             if (creature.getDNA().getGenValue(DNA::damageFire) >
                 creature.getDNA().getGenValue(DNA::damageIce))
-                creature.attack(player, Damage::Type(Damage::Near | Damage::Fire));
+                creature.attack(player, DamageType(DamageType::Near | DamageType::Fire));
             else
-                creature.attack(player, Damage::Type(Damage::Near | Damage::Ice));
+                creature.attack(player, DamageType(DamageType::Near | DamageType::Ice));
     }
     else
     {
@@ -612,9 +612,9 @@ void GameMechanics::enemyMove(Creature &creature)
         while(creature.getAP() > 0)
             if (creature.getDNA().getGenValue(DNA::damageFire) >
                 creature.getDNA().getGenValue(DNA::damageIce))
-                creature.attack(player, Damage::Type(Damage::Long | Damage::Fire));
+                creature.attack(player, DamageType(DamageType::Long | DamageType::Fire));
             else
-                creature.attack(player, Damage::Type(Damage::Long | Damage::Ice));
+                creature.attack(player, DamageType(DamageType::Long | DamageType::Ice));
     }
 }
 

@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "creature.h"
-#include "enum.h"
+//#include "enum.h"
 
 class GameMechanics : public QWidget
 {
@@ -20,7 +20,7 @@ public:
 
     int getMapSize() const;
     QSize getSizeForSA() const;
-    CellType::CellType getCell(int i, int j) const;
+    CellType getCell(int i, int j) const;
     const Creature getPlayer() const;
     Creature* getrPlayer();
 
@@ -32,12 +32,12 @@ signals:
 
 public slots:
     void paint(int del);
-    void paintAttack(QPoint a, QPoint b, Damage::Type dT);
-    bool setPlayersDT(Damage::Type dt);
+    void paintAttack(QPoint a, QPoint b, DamageType dT);
+    bool setPlayersDT(DamageType dt);
     void nextMove();
 
 private:
-    QColor cellColor[CellType::cellTypeCount] { //needed for painting
+    QColor cellColor[short(CellType::cellTypeCount)] { //needed for painting
         QColor(0, 0, 0),
         QColor(152, 251, 152),
         QColor(253, 236, 143),
@@ -47,7 +47,7 @@ private:
 
     const int mapSize {65}; //must be (power of 2) + 1 cause of D-S algorithm
     int cellSize {10};      //pixels per cell
-    CellType::CellType ** map;
+    CellType ** map;
     QPoint curCellPos;      //celected cell
 
     std::vector<Creature> enemy;
@@ -56,11 +56,11 @@ private:
     //for paintAttack()
     QPoint attacker;
     QPoint defender;
-    Damage::Type damageType;
+    DamageType damageType;
     bool attack;
 
     //for storeDamage()
-    Damage::Type playersDT;
+    DamageType playersDT;
     int currentDamage;
     bool allEnemiesDead;
 

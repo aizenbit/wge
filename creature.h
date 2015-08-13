@@ -16,14 +16,14 @@ public:
     QPoint position;
 
 public:
-    Creature(CellType::CellType **m, unsigned mS, QObject *parent = 0);
+    Creature(CellType **m, unsigned mS, QObject *parent = 0);
     Creature(const Creature&);
     ~Creature();
     const QPoint getPosition() const;
-    bool move(Direction::Direction directionX, Direction::Direction directionY);
+    bool move(Direction directionX, Direction directionY);
     bool moveTo(int x, int y);
-    bool attack(Creature *creature, Damage::Type damageType);
-    void acceptDamage(int dmg, Damage::Type damageType);
+    bool attack(Creature *creature, DamageType damageType);
+    void acceptDamage(int dmg, DamageType damageType);
 
     bool findWayTo(int x, int y);
     int stepByWay();
@@ -49,7 +49,7 @@ public:
 
 signals:
     void paint(int delay);
-    void paintAttack(QPoint a, QPoint b, Damage::Type dT);
+    void paintAttack(QPoint a, QPoint b, DamageType dT);
     void damaged(int damage);
 
 private:
@@ -57,7 +57,7 @@ private:
     int HP;
     int mapSize;
     int actionpoints;
-    CellType::CellType **map;
+    CellType **map;
     std::vector<QPoint> way;
     bool isAlive;
     int DamageToPlayer;

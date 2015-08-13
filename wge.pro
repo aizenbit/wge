@@ -14,14 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         ui.cpp \
-    gamemechanics.cpp \
-    dna.cpp \
-    creature.cpp
+        gamemechanics.cpp \
+        dna.cpp \
+        creature.cpp
 
 HEADERS  += ui.h \
-    gamemechanics.h \
-    dna.h \
-    creature.h \
-    enum.h
+        gamemechanics.h \
+        dna.h \
+        creature.h \
+        enum.h
 
 QMAKE_CXXFLAGS += -std=gnu++0x

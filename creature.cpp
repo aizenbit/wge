@@ -2,7 +2,7 @@
 
 #include "creature.h"
 
-Creature::Creature(CellType::CellType **m, unsigned mS, QObject *parent) : QObject(parent)
+Creature::Creature(CellType **m, unsigned mS, QObject *parent) : QObject(parent)
 {
     map = m;
     mapSize = mS;
@@ -131,7 +131,7 @@ void Creature::restoreAP()
 
 //------------------------------------------------------------
 
-bool Creature::move(Direction::Direction directionX, Direction::Direction directionY)
+bool Creature::move(Direction directionX, Direction directionY)
 {
     const int x = position.x();
     const int y = position.y();
@@ -176,7 +176,7 @@ bool Creature::moveTo(int x, int y)
 
 //------------------------------------------------------------
 
-bool Creature::attack(Creature *creature, Damage::Type damageType)
+bool Creature::attack(Creature *creature, DamageType damageType)
 {
     if (actionpoints <= 0)
         return false;
@@ -188,17 +188,17 @@ bool Creature::attack(Creature *creature, Damage::Type damageType)
     float distance = sqrtf(powf(enemyPos.x() - position.x(), 2) +
                            powf(enemyPos.y() - position.y(), 2));
 
-    if (damageType & Damage::Near)
+    if (damageType & DamageType::Near)
     {
         if (distance >= nearDamageDistance)
             return false;
 
         int dmg = dna.getGenValue(DNA::damageNear) * logf(nearDamageDistance - distance);
 
-        if (damageType & Damage::Fire)
+        if (damageType & DamageType::Fire)
             dmg += dna.getGenValue(DNA::damageFire);
 
-        if (damageType & Damage::Ice)
+        if (damageType & DamageType::Ice)
             dmg += dna.getGenValue(DNA::damageIce);
 
         creature->acceptDamage(dmg, damageType);
@@ -207,17 +207,17 @@ bool Creature::attack(Creature *creature, Damage::Type damageType)
         return true;
     }
 
-    if (damageType & Damage::Long)
+    if (damageType & DamageType::Long)
     {
         if (distance >= longDamageDistance)
             return false;
 
         int dmg = dna.getGenValue(DNA::damageLong);
 
-        if (damageType & Damage::Fire)
+        if (damageType & DamageType::Fire)
             dmg += dna.getGenValue(DNA::damageFire);
 
-        if (damageType & Damage::Ice)
+        if (damageType & DamageType::Ice)
             dmg += dna.getGenValue(DNA::damageIce);
 
         creature->acceptDamage(dmg, damageType);
@@ -231,25 +231,25 @@ bool Creature::attack(Creature *creature, Damage::Type damageType)
 
 //------------------------------------------------------------
 
-void Creature::acceptDamage(int dmg, Damage::Type damageType)
+void Creature::acceptDamage(int dmg, DamageType damageType)
 {
     if (dmg <= 0)
         return;
 
-    if ((damageType & Damage::Long) &&
-        (damageType & Damage::Near))
+    if ((damageType & DamageType::Long) &&
+        (damageType & DamageType::Near))
         return;
 
-    if (damageType & Damage::Fire)
+    if (damageType & DamageType::Fire)
         dmg = dmg * (100 - dna.getGenValue(DNA::defenceFire)) / 100;
 
-    if (damageType & Damage::Ice)
+    if (damageType & DamageType::Ice)
         dmg = dmg * (100 - dna.getGenValue(DNA::defenceIce)) / 100;
 
-    if (damageType & Damage::Long)
+    if (damageType & DamageType::Long)
         dmg = dmg * (100 - dna.getGenValue(DNA::defenceLong)) / 100;
 
-    if (damageType & Damage::Near)
+    if (damageType & DamageType::Near)
         dmg = dmg * (100 - dna.getGenValue(DNA::defenceNear)) / 100;
 
     HP -= dmg;

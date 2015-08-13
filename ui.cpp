@@ -192,16 +192,16 @@ void UI::sendSBData()
 
 void UI::sendRBData()
 {
-    Damage::Type dt = Damage::None;
+    DamageType dt = DamageType::None;
 
     if (rbVector[0]->isChecked())
-        dt = Damage::Fire;
+        dt = DamageType::Fire;
     if (rbVector[1]->isChecked())
-        dt = Damage::Ice;
+        dt = DamageType::Ice;
     if (rbVector[2]->isChecked())
-        dt = Damage::Type(dt | Damage::Long);
+        dt = DamageType(dt | DamageType::Long);
     if (rbVector[3]->isChecked())
-        dt = Damage::Type(dt | Damage::Near);
+        dt = DamageType(dt | DamageType::Near);
 
     gameMechanics->setPlayersDT(dt);
 }
